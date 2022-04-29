@@ -1,6 +1,6 @@
 # Проект «Киноман»
 
-- Студент: [Неопознанный енот](https://up.htmlacademy.ru/ecmascript/17/user/1478603).
+- Студент: [Natalia Vozhdaeva](https://up.htmlacademy.ru/ecmascript/17/user/1478603).
 - Наставник: Дарья Сюткина.
 
 ---
