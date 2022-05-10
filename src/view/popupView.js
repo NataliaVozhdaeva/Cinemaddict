@@ -1,7 +1,63 @@
 import { createElement } from "../render.js";
+import { humanizeAllReliaseDate, humanizeFilmDuration } from "../utils.js";
 
-const createPopup = () =>
-  `<section class="film-details">
+function createPopupTemplate(film) {
+  /*const {
+    id = "",
+    author = "enter your name",
+    comment = "",
+    date = "",
+    emotion = "",
+  } = commentDefoult;
+  */
+
+  const { filmInfo, userDetails, comments } = film;
+
+  const allReleaseDate = humanizeAllReliaseDate(filmInfo.release.date);
+
+  let genresCount = filmInfo.genre;
+  const createGenreCountTemplate = (genresCount) =>
+    `<td class="film-details__term">
+    ${genresCount.length > 1 ? "Genres" : "Genre"}
+  </td>
+  ${
+    genresCount.length > 1
+      ? `<td class="film-details__cell">
+      ${Object.entries(genresCount)
+        .map(
+          ([genresCount, value]) => `
+      <span class="film-details__genre">${value}</span>`
+        )
+        .join("")}
+    `
+      : `<td class="film-details__cell">
+      <span class="film-details__genre">${genresCount}</span>`
+  }`;
+  const genres = createGenreCountTemplate(genresCount);
+
+  const commentCount = comments;
+
+  console.log(commentCount);
+
+  /*
+мне кажется неправильным переписывать весь кусок кода, который делал все то же самое
+для карточки фильма, но придумать как это сюда передать у меня что-то не получается...
+*/
+  const filmDuration = humanizeFilmDuration(filmInfo.runtime);
+
+  const addToWatchlistClassName = userDetails.watchlist
+    ? "film-details__control-button--active"
+    : "";
+
+  const alreadyWatchedClassName = userDetails.already_watched
+    ? "film-details__control-button--active"
+    : "";
+
+  const favoriteClassName = userDetails.favorite
+    ? "film-details__control-button--active"
+    : "";
+
+  return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__top-container">
       <div class="film-details__close">
@@ -9,54 +65,50 @@ const createPopup = () =>
       </div>
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
-          <img class="film-details__poster-img" src="./images/posters/the-great-flamarion.jpg" alt="">
+          <img class="film-details__poster-img" src=${filmInfo.poster} alt="">
 
-          <p class="film-details__age">18+</p>
+          <p class="film-details__age">${filmInfo.age_rating}</p>
         </div>
 
         <div class="film-details__info">
           <div class="film-details__info-head">
             <div class="film-details__title-wrap">
-              <h3 class="film-details__title">The Great Flamarion</h3>
-              <p class="film-details__title-original">Original: The Great Flamarion</p>
+            <h3 class="film-details__title">${filmInfo.title}</h3>
+              <p class="film-details__title-original">Original: ${filmInfo.title}</p>
             </div>
 
             <div class="film-details__rating">
-              <p class="film-details__total-rating">8.9</p>
+              <p class="film-details__total-rating">${filmInfo.totalRating}</p>
             </div>
           </div>
 
           <table class="film-details__table">
             <tr class="film-details__row">
               <td class="film-details__term">Director</td>
-              <td class="film-details__cell">Anthony Mann</td>
+              <td class="film-details__cell">${filmInfo.director}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Writers</td>
-              <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+              <td class="film-details__cell">${filmInfo.writers}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Actors</td>
-              <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+              <td class="film-details__cell">${filmInfo.actors}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">30 March 1945</td>
+              <td class="film-details__cell">${allReleaseDate}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">1h 18m</td>
+              <td class="film-details__cell">${filmDuration}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
-              <td class="film-details__cell">USA</td>
+              <td class="film-details__cell">${filmInfo.release.release_country}</td>
             </tr>
-            <tr class="film-details__row">
-              <td class="film-details__term">Genres</td>
-              <td class="film-details__cell">
-                <span class="film-details__genre">Drama</span>
-                <span class="film-details__genre">Film-Noir</span>
-                <span class="film-details__genre">Mystery</span></td>
+            <tr class="film-details__row">${genres}
+             
             </tr>
           </table>
 
@@ -67,15 +119,15 @@ const createPopup = () =>
       </div>
 
       <section class="film-details__controls">
-        <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-        <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-        <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+        <button type="button" class="film-details__control-button film-details__control-button--watchlist ${addToWatchlistClassName}" id="watchlist" name="watchlist">Add to watchlist</button>
+        <button type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatchedClassName}" id="watched" name="watched">Already watched</button>
+        <button type="button" class="film-details__control-button film-details__control-button--favorite ${favoriteClassName}" id="favorite" name="favorite">Add to favorites</button>
       </section>
     </div>
 
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
           <li class="film-details__comment">
@@ -166,10 +218,16 @@ const createPopup = () =>
   </form>
 </section>
 `;
+}
 
 export default class PopupView {
+  constructor(film, comments) {
+    this.film = film;
+    this.comments = comments;
+  }
+
   getTemplate() {
-    return createPopup();
+    return createPopupTemplate(this.film, this.comments);
   }
 
   getElement() {

@@ -1,10 +1,12 @@
 import { createElement } from "../render.js";
 
-const createFilmsSection = () => `<section class="films"></section>`;
+const createPopupForm = () =>
+  `<form class="film-details__inner" action="" method="get">
+  </form> `;
 
-export default class FilmsSectionView {
+export default class PopupFormView {
   getTemplate() {
-    return createFilmsSection();
+    return createPopupForm();
   }
 
   getElement() {
