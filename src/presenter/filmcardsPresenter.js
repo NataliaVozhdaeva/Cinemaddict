@@ -3,10 +3,20 @@ import FilmCardsContainerView from "../view/filmCardsContainerView";
 import FilmListView from "../view/filmListView";
 import FilmCardView from "../view/filmCardView";
 import ShowmoreBtn from "../view/showmoreBtnView";
+//import PopupView from "../view/popupView";
+//import PopupFormView from "../view/popupFormView";
+
+let filmPosters = document.querySelectorAll(".film-card__poster");
 
 export default class FilmCardsPresenter {
+  /*#filmSection = null;
+  #filmsModel = null;*/
+
   filmList = new FilmListView();
   filmCardContainer = new FilmCardsContainerView();
+  //popupForm = new PopupFormView();
+
+  #filmCards = [];
 
   init = (filmSection, filmsModel) => {
     this.filmSection = filmSection;
@@ -23,6 +33,17 @@ export default class FilmCardsPresenter {
       );
     }
 
+    /*  filmPosters.forEach((poster) => {
+      poster.addEventListener("click", () => {
+        console.log("click");
+         render(this.popupForm, this.documentBody);
+        render(
+          new PopupView(this.presentFilms[1]),
+          this.popupForm.getElement()
+        ); 
+      });
+    });
+ */
     render(new ShowmoreBtn(), this.filmSection);
   };
 }

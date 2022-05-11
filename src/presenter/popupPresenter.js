@@ -9,6 +9,7 @@ export default class PopupPresenter {
     this.documentBody = documentBody;
     this.filmsModel = filmsModel;
     this.presentFilms = [...this.filmsModel.getFilms()];
+    this.comments = [...this.filmsModel.getComments()];
 
     render(this.popupForm, this.documentBody);
     render(new PopupView(this.presentFilms[1]), this.popupForm.getElement());

@@ -9,10 +9,24 @@ const generateTitle = () => {
     "Santa Claus Conquers the Martians",
     "Made for Each Other",
   ];
-
   const randomIndex = getRandomInteger(0, titles.length - 1);
 
   return titles[randomIndex];
+};
+
+const generatePoster = () => {
+  const posters = [
+    "./images/posters/the-dance-of-life.jpg",
+    "./images/posters/made-for-each-other.png",
+    "./images/posters/popeye-meets-sinbad.png",
+    "./images/posters/sagebrush-trail.jpg",
+    "./images/posters/santa-claus-conquers-the-martians.jpg",
+    "./images/posters/the-great-flamarion.jpg",
+    "./images/posters/the-man-with-the-golden-arm.jpg",
+  ];
+  const randomIndex = getRandomInteger(0, posters.length - 1);
+
+  return posters[randomIndex];
 };
 
 const generateCommentContent = () => {
@@ -27,7 +41,6 @@ const generateCommentContent = () => {
     "But I was waiting for Chuk Norris...",
     "Almost two hours? Seriously?",
   ];
-
   const randomIndex = getRandomInteger(0, commentsTexts.length - 1);
 
   return commentsTexts[randomIndex];
@@ -41,20 +54,26 @@ const generateAuthor = () => {
     "Jane Ostin",
     "Volan d'Mort",
   ];
-
   const randomIndex = getRandomInteger(0, autors.length - 1);
 
   return autors[randomIndex];
 };
 
+const generateEmogi = () => {
+  const emogi = EMOGI;
+  const randomIndex = getRandomInteger(0, EMOGI.length - 1);
+
+  return emogi[randomIndex];
+};
+
 const generateFilm = () => ({
-  id: "0",
-  comments: ["42", "33", "28"],
+  id: "42",
+  comments: [],
   filmInfo: {
     title: generateTitle(),
     alternative_title: "Laziness Who Sold Themselves",
     totalRating: 5.3,
-    poster: "./images/posters/the-dance-of-life.jpg",
+    poster: generatePoster(),
     age_rating: 0,
     director: "Tom Ford",
     writers: ["Takeshi Kitano"],
@@ -81,7 +100,7 @@ const generateComment = () => ({
   author: generateAuthor(),
   comment: generateCommentContent(),
   date: "2019-05-11T16:12:32.554Z",
-  emotion: EMOGI,
+  emotion: generateEmogi(),
 });
 
 export { generateFilm, generateComment };

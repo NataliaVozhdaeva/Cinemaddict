@@ -8,7 +8,7 @@ const getRandomInteger = (a = 0, b = 1) => {
 };
 
 const humanizeReliaseDate = (releaseDate) => dayjs(releaseDate).format("YYYY");
-const humanizeAllReliaseDate = (releaseDate) =>
+const humanizeFullReliaseDate = (releaseDate) =>
   dayjs(releaseDate).format("DD MMMM YYYY");
 
 const humanizeFilmDuration = (duration) => {
@@ -22,7 +22,7 @@ const isFilmChoose = (choose) => Object.values(choose).some(Boolean);
 export {
   getRandomInteger,
   humanizeReliaseDate,
-  humanizeAllReliaseDate,
+  humanizeFullReliaseDate,
   humanizeFilmDuration,
   isFilmChoose,
 };
