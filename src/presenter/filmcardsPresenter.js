@@ -3,10 +3,7 @@ import FilmCardsContainerView from "../view/filmCardsContainerView";
 import FilmListView from "../view/filmListView";
 import FilmCardView from "../view/filmCardView";
 import ShowmoreBtn from "../view/showmoreBtnView";
-//import PopupView from "../view/popupView";
-//import PopupFormView from "../view/popupFormView";
-
-let filmPosters = document.querySelectorAll(".film-card__poster");
+import PopupView from "../view/popupView";
 
 export default class FilmCardsPresenter {
   /*#filmSection = null;
@@ -14,13 +11,13 @@ export default class FilmCardsPresenter {
 
   filmList = new FilmListView();
   filmCardContainer = new FilmCardsContainerView();
-  //popupForm = new PopupFormView();
 
   #filmCards = [];
 
   init = (filmSection, filmsModel) => {
     this.filmSection = filmSection;
     this.filmsModel = filmsModel;
+
     this.presentFilms = [...this.filmsModel.getFilms()];
     this.presentComments = [...this.filmsModel.getComments()];
 
@@ -33,17 +30,21 @@ export default class FilmCardsPresenter {
       );
     }
 
-    /*  filmPosters.forEach((poster) => {
+    let filmPosters = document.querySelectorAll(".film-card__poster");
+    let popupCloseBtn = document.querySelector(".film-details__close-btn");
+    filmPosters.forEach((poster, index) => {
       poster.addEventListener("click", () => {
-        console.log("click");
-         render(this.popupForm, this.documentBody);
+        let footer = document.querySelector(".footer");
         render(
-          new PopupView(this.presentFilms[1]),
-          this.popupForm.getElement()
-        ); 
+          new PopupView(this.presentFilms[index], this.presentComments),
+          footer,
+          "afterend"
+        );
       });
     });
- */
+
     render(new ShowmoreBtn(), this.filmSection);
   };
 }
+
+/*film-details__close-btn*/

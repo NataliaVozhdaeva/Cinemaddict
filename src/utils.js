@@ -19,10 +19,14 @@ const humanizeFilmDuration = (duration) => {
 
 const isFilmChoose = (choose) => Object.values(choose).some(Boolean);
 
+const humanizeCommentDate = (commentDate) =>
+  dayjs(commentDate).format("YYYY/MM/DD HH:mm");
+
 export {
   getRandomInteger,
   humanizeReliaseDate,
   humanizeFullReliaseDate,
   humanizeFilmDuration,
   isFilmChoose,
+  humanizeCommentDate,
 };

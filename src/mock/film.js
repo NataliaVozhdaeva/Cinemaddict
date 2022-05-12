@@ -66,9 +66,15 @@ const generateEmogi = () => {
   return emogi[randomIndex];
 };
 
+const generateId = () => {
+  const id = ["0", "1", "2", "3"];
+  const randomIndex = getRandomInteger(0, id.length - 1);
+  return id[randomIndex];
+};
+
 const generateFilm = () => ({
-  id: "42",
-  comments: [],
+  id: ["42"],
+  comments: ["2", "1", "0"],
   filmInfo: {
     title: generateTitle(),
     alternative_title: "Laziness Who Sold Themselves",
@@ -96,10 +102,10 @@ const generateFilm = () => ({
 });
 
 const generateComment = () => ({
-  id: "42",
+  id: generateId(),
   author: generateAuthor(),
   comment: generateCommentContent(),
-  date: "2019-05-11T16:12:32.554Z",
+  date: "2022-05-11T16:12:32.554Z",
   emotion: generateEmogi(),
 });
 

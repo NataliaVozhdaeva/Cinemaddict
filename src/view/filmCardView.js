@@ -24,6 +24,17 @@ const createFilmTemplate = (film) => {
     ? "film-card__controls-item--active"
     : "";
 
+  const createShotDescription = function (text) {
+    if (text.length > 140) {
+      let shotDescription = text.slice(0, 139);
+      return (shotDescription += "...");
+    } else {
+      return text;
+    }
+  };
+
+  const description = createShotDescription(filmInfo.description);
+
   return `<article class="film-card">
           <a class="film-card__link">
             <h3 class="film-card__title">${filmInfo.title}</h3>
@@ -34,7 +45,7 @@ const createFilmTemplate = (film) => {
               <span class="film-card__genre">${filmInfo.genre}</span>
             </p>
             <img src=${filmInfo.poster} alt="" class="film-card__poster">
-            <p class="film-card__description">${filmInfo.description}</p>
+            <p class="film-card__description">${description}</p>
             <span class="film-card__comments">${comments.length} comments</span>
           </a>
           <div class="film-card__controls">

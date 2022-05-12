@@ -1,9 +1,14 @@
+import { EMOGI } from "../const.js";
 import { createElement } from "../render.js";
-import { humanizeFullReliaseDate, humanizeFilmDuration } from "../utils.js";
+import {
+  humanizeFullReliaseDate,
+  humanizeFilmDuration,
+  humanizeCommentDate,
+} from "../utils.js";
 
-function createPopupTemplate(film, fullComment) {
+function createPopupTemplate(film, allComments) {
   const { filmInfo, userDetails, comments } = film;
-  const { id, author, comment, date, emotion } = fullComment;
+  const { id, author, comment, date, emotion } = allComments;
 
   const fullReleaseDate = humanizeFullReliaseDate(filmInfo.release.date);
   let genresCount = filmInfo.genre;
@@ -25,11 +30,58 @@ function createPopupTemplate(film, fullComment) {
       : `<td class="film-details__cell">
       <span class="film-details__genre">${genresCount}</span>`
   }`;
+
   const genres = createGenreCountTemplate(genresCount);
+
+  const CommentDate = humanizeCommentDate(allComments[1].date);
+
+  const actualComments = allComments.filter(({ id }) =>
+    comments.some((commentId) => commentId === id)
+  );
+
+  const createComments = (arr) =>
+    arr
+      .map(
+        ({ author, comment, emotion }) => `
+      <li class="film-details__comment">
+         <span class="film-details__comment-emoji">
+              <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
+            </span> 
+            <div>
+              <p class="film-details__comment-text">${comment}</p>
+              <p class="film-details__comment-info">
+                <span class="film-details__comment-author">${author}</span>
+                <span class="film-details__comment-day">${CommentDate}</span>
+                <button class="film-details__comment-delete">Delete</button>
+              </p>
+            </div>
+          </li>`
+      )
+      .join("");
+
+  const renderComments = createComments(actualComments);
+
+  const createEmogiList = (currentEmogi) =>
+    EMOGI.map(
+      (emogi) => `
+    <input 
+      class="film-details__emoji-item visually-hidden" 
+      name="comment-emoji" 
+      type="radio" 
+      id="emoji-${emogi}" 
+      value="${emogi}">
+      ${currentEmogi === emogi ? "checked" : ""}
+    <label class="film-details__emoji-label" for="emoji-${emogi}">
+      <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
+    </label>`
+    ).join("");
+
+  const emogiList = createEmogiList(emotion);
 
   /* 
 мне кажется неправильным переписывать весь кусок кода, который делал все то же самое
 для карточки фильма, но придумать как это сюда передать у меня что-то не получается...
+
 */
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
 
@@ -100,9 +152,7 @@ function createPopupTemplate(film, fullComment) {
             </tr>
           </table>
 
-          <p class="film-details__film-description">
-            The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback. The Great Flamarion (Erich von Stroheim) is an arrogant, friendless, and misogynous marksman who displays his trick gunshot act in the vaudeville circuit. His show features a beautiful assistant, Connie (Mary Beth Hughes) and her drunken husband Al (Dan Duryea), Flamarion's other assistant. Flamarion falls in love with Connie, the movie's femme fatale, and is soon manipulated by her into killing her no good husband during one of their acts.
-          </p>
+          <p class="film-details__film-description">${filmInfo.description}</p>
         </div>
       </div>
 
@@ -116,48 +166,16 @@ function createPopupTemplate(film, fullComment) {
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
-<ul class="film-details__comments-list">
-          <li class="film-details__comment">
-            <span class="film-details__comment-emoji">
-              <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-            </span>
-            <div>
-              <p class="film-details__comment-text">Interesting setting and a good cast</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">Tim Macoveev</span>
-                <span class="film-details__comment-day">2019/12/31 23:59</span>
-                <button class="film-details__comment-delete">Delete</button>
-              </p>
-            </div>
-          </li>
+          <ul class="film-details__comments-list">
+            ${renderComments}
           </ul>
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label"></div>
-
           <label class="film-details__comment-label">
             <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
           </label>
-
           <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-            <label class="film-details__emoji-label" for="emoji-smile">
-              <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-            <label class="film-details__emoji-label" for="emoji-sleeping">
-              <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-            <label class="film-details__emoji-label" for="emoji-puke">
-              <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-            <label class="film-details__emoji-label" for="emoji-angry">
-              <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-            </label>
+            ${emogiList}
           </div>
         </div>
       </section>
