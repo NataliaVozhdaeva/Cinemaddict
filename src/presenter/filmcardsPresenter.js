@@ -3,7 +3,11 @@ import FilmCardsContainerView from "../view/filmCardsContainerView";
 import FilmListView from "../view/filmListView";
 import FilmCardView from "../view/filmCardView";
 import ShowmoreBtn from "../view/showmoreBtnView";
-import PopupView from "../view/popupView";
+import FilmDetailsView from "../view/filmDetailsView.js";
+import FilmDetailsFormView from "../view/filmDetailsFormView";
+import FilmDetailsPresenter from "../presenter/filmDetailsPresenter";
+
+const filmDetailsPresenter = new FilmDetailsPresenter();
 
 export default class FilmCardsPresenter {
   /*#filmSection = null;
@@ -11,40 +15,28 @@ export default class FilmCardsPresenter {
 
   filmList = new FilmListView();
   filmCardContainer = new FilmCardsContainerView();
+  filmDetailsView = new FilmDetailsView();
+  popupForm = new FilmDetailsFormView();
 
-  #filmCards = [];
+  //#filmCards = [];
 
   init = (filmSection, filmsModel) => {
     this.filmSection = filmSection;
     this.filmsModel = filmsModel;
 
-    this.presentFilms = [...this.filmsModel.getFilms()];
-    this.presentComments = [...this.filmsModel.getComments()];
+    this.films = [...this.filmsModel.getFilms()];
 
     render(this.filmList, this.filmSection);
     render(this.filmCardContainer, this.filmList.getElement());
-    for (let i = 0; i < this.presentFilms.length; i++) {
+    for (let i = 0; i < this.films.length; i++) {
       render(
-        new FilmCardView(this.presentFilms[i]),
+        new FilmCardView(this.films[i]),
         this.filmCardContainer.getElement()
       );
     }
-
-    let filmPosters = document.querySelectorAll(".film-card__poster");
-    let popupCloseBtn = document.querySelector(".film-details__close-btn");
-    filmPosters.forEach((poster, index) => {
-      poster.addEventListener("click", () => {
-        let footer = document.querySelector(".footer");
-        render(
-          new PopupView(this.presentFilms[index], this.presentComments),
-          footer,
-          "afterend"
-        );
-      });
-    });
+    let footer = document.querySelector(".footer");
+    filmDetailsPresenter.init(filmsModel, footer);
 
     render(new ShowmoreBtn(), this.filmSection);
   };
 }
-
-/*film-details__close-btn*/

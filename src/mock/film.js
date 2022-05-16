@@ -3,11 +3,13 @@ import { EMOGI } from "../const.js";
 
 const generateTitle = () => {
   const titles = [
-    "A Little Pony Without The Carpet",
     "The Man with the Golden Arm",
     "The Great Flamarion",
     "Santa Claus Conquers the Martians",
     "Made for Each Other",
+    "The dance of life",
+    "Popeye & Sindbad",
+    "Sagebrush trail",
   ];
   const randomIndex = getRandomInteger(0, titles.length - 1);
 
@@ -27,6 +29,18 @@ const generatePoster = () => {
   const randomIndex = getRandomInteger(0, posters.length - 1);
 
   return posters[randomIndex];
+};
+
+const generateFilmDescription = () => {
+  const descriptions = [
+    'Oscar-winning film, a war drama about two young people, from the creators of timeless classic "Nu, Pogodi!" and "Alice in Wonderland", with the best fight scenes since Bruce Lee.',
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.",
+    "Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat.",
+  ];
+  const randomIndex = getRandomInteger(0, descriptions.length - 1);
+
+  return descriptions[randomIndex];
 };
 
 const generateCommentContent = () => {
@@ -74,7 +88,7 @@ const generateId = () => {
 
 const generateFilm = () => ({
   id: ["42"],
-  comments: ["2", "1", "0"],
+  comments: ["0", "3"],
   filmInfo: {
     title: generateTitle(),
     alternative_title: "Laziness Who Sold Themselves",
@@ -90,8 +104,7 @@ const generateFilm = () => ({
     },
     runtime: 77,
     genre: ["Comedy", "Music"],
-    description:
-      'Oscar-winning film, a war drama about two young people, from the creators of timeless classic "Nu, Pogodi!" and "Alice in Wonderland", with the best fight scenes since Bruce Lee.',
+    description: generateFilmDescription(),
   },
   userDetails: {
     watchlist: true,
