@@ -1,57 +1,42 @@
 import { render } from "../render.js";
-import FilmCardsContainerView from "../view/filmCardsContainer";
-//import FilmSection from "../view/filmsSection";
-import FilmListView from "../view/filmList";
-import FilmCardView from "../view/filmCard";
-import ShowmoreBtn from "../view/showmoreBtn";
+import FilmCardsContainerView from "../view/filmCardsContainerView";
+import FilmListView from "../view/filmListView";
+import FilmCardView from "../view/filmCardView";
+import ShowmoreBtn from "../view/showmoreBtnView";
+import FilmDetailsView from "../view/filmDetailsView.js";
+import FilmDetailsFormView from "../view/filmDetailsFormView";
+import FilmDetailsPresenter from "../presenter/filmDetailsPresenter";
+
+const filmDetailsPresenter = new FilmDetailsPresenter();
 
 export default class FilmCardsPresenter {
+  /*#filmSection = null;
+  #filmsModel = null;*/
+
   filmList = new FilmListView();
   filmCardContainer = new FilmCardsContainerView();
+  filmDetailsView = new FilmDetailsView();
+  popupForm = new FilmDetailsFormView();
 
-  init = (filmSection) => {
+  //#filmCards = [];
+
+  init = (filmSection, filmsModel) => {
     this.filmSection = filmSection;
+    this.filmsModel = filmsModel;
+
+    this.films = [...this.filmsModel.getFilms()];
 
     render(this.filmList, this.filmSection);
     render(this.filmCardContainer, this.filmList.getElement());
-    for (let i = 0; i < 5; i++) {
-      render(new FilmCardView(), this.filmCardContainer.getElement());
+    for (let i = 0; i < this.films.length; i++) {
+      render(
+        new FilmCardView(this.films[i]),
+        this.filmCardContainer.getElement()
+      );
     }
+    let footer = document.querySelector(".footer");
+    filmDetailsPresenter.init(filmsModel, footer);
 
     render(new ShowmoreBtn(), this.filmSection);
   };
 }
-
-/*boardComponent = new BoardView();
-  taskListComponent = new TaskListView();
-
-  init = (boardContainer) => {
-    this.boardContainer = boardContainer;
-
-    render(this.boardComponent, this.boardContainer);
-    render(new SortView(), this.boardComponent.getElement());
-    render(this.taskListComponent, this.boardComponent.getElement());
-    render(new TaskEditView(), this.taskListComponent.getElement());
-
-    for (let i = 0; i < 3; i++) {
-      render(new TaskView(), this.taskListComponent.getElement());
-    }
-
-    render(new LoadMoreButtonView(), this.boardComponent.getElement());
-  };*/
-
-/*render(new FilmsSectionView(), siteMainElement);
-
-const filmsSection = siteMainElement.querySelector(".films");
-render(new FilmListView(), filmsSection);
-
-const filmList = filmsSection.querySelector(".films-list");
-render(new FilmCardsContainerView(), filmList);
-
-const filmCardsContainer = filmList.querySelector(".films-list__container");
-render(new FilmCardView(), filmCardsContainer);
-render(new FilmCardView(), filmCardsContainer);
-render(new FilmCardView(), filmCardsContainer);
-render(new FilmCardView(), filmCardsContainer);
-render(new FilmCardView(), filmCardsContainer);
-*/
