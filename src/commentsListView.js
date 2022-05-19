@@ -1,6 +1,5 @@
 import { createElement } from "../render.js";
 import { humanizeCommentDate } from "../utils.js";
-import { EMOGI } from "../const.js";
 
 function createCommentsListTemplate(film, allComments) {
   const { comments } = film;
@@ -9,8 +8,6 @@ function createCommentsListTemplate(film, allComments) {
   const actualComments = allComments.filter(({ id }) =>
     comments.some((commentId) => commentId === id)
   );
-  /* console.log(allComments);
-  console.log(actualComments); */
 
   const CommentDate = humanizeCommentDate(allComments[1].date);
 
@@ -36,43 +33,9 @@ function createCommentsListTemplate(film, allComments) {
 
   const renderComments = createComments(actualComments);
 
-  const createEmogiList = () =>
-    EMOGI.map(
-      (emogi) => `
-    <input 
-      class="film-details__emoji-item visually-hidden" 
-      name="comment-emoji" 
-      type="radio" 
-      id="emoji-${emogi}" 
-      value="${emogi}">
-    <label class="film-details__emoji-label" for="emoji-${emogi}">
-      <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
-    </label>`
-    ).join("");
-
-  const emogiList = createEmogiList(EMOGI);
-
-  return `
-  <div class="film-details__bottom-container">
-    <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">
-        Comments <span class="film-details__comments-count">${comments.length}</span>
-      </h3>
-      <ul class="film-details__comments-list">
-        ${renderComments}
-      </ul>
-      <div class="film-details__new-comment">
-        <div class="film-details__add-emoji-label"></div>
-        <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-        </label>
-        <div class="film-details__emoji-list">
-          ${emogiList}
-        </div>
-      </div>
-    </section>
-  </div>
-`;
+  return `<ul class="film-details__comments-list">
+            ${renderComments}
+          </ul>`;
 }
 
 export default class CommentsListView {

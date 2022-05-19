@@ -88,7 +88,7 @@ const generateId = () => {
 
 const generateFilm = () => ({
   id: ["42"],
-  comments: ["0", "3"],
+  comments: ["0", "1"],
   filmInfo: {
     title: generateTitle(),
     alternative_title: "Laziness Who Sold Themselves",

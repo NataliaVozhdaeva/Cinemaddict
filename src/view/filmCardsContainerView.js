@@ -4,19 +4,20 @@ const createFilmCardsContainer = () =>
   `<div class="films-list__container"></div> `;
 
 export default class FilmCardsContainerView {
-  getTemplate() {
+  #element = null;
+  get template() {
     return createFilmCardsContainer();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

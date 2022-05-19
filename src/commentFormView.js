@@ -1,6 +1,5 @@
 import { EMOGI } from "../const.js";
 import { createElement } from "../render.js";
-import { humanizeCommentDate } from "../utils.js";
 
 function createCommentsFormTemplate(film) {
   const { comments } = film;

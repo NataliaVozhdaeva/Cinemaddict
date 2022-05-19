@@ -1,27 +1,25 @@
 import { render } from "../render.js";
-import FilmDetailsView from "../view/filmDetailsView";
-import FilmDetailsFormView from "../view/filmDetailsFormView";
+//import FilmDetailsView from "../view/filmDetailsView";
+//import FilmDetailsFormView from "../view/filmDetailsFormView";
 import CommentFormView from "../view/commentFormView";
 import CommentsListView from "../view/commentsListView";
 
 export default class FilmDetailsPresenter {
-  popupForm = new FilmDetailsFormView();
-
+  //#popupForm = new FilmDetailsFormView();
+  #comments = [];
   init = (filmsModel, container) => {
     this.container = container;
     this.filmsModel = filmsModel;
-    this.films = [...this.filmsModel.getFilms()];
-    this.comments = [...this.filmsModel.getComments()];
+    this.films = [...this.filmsModel.films];
+    this.#comments = [...this.filmsModel.comments];
 
-    let footer = document.querySelector(".footer");
-
-    render(this.popupForm, footer);
-    render(new FilmDetailsView(this.films[1]), this.popupForm.getElement());
+    render(this.popupForm, container);
+    render(new FilmDetailsView(this.films[1]), this.popupForm.element);
     let filmDetailsContainer = document.querySelector(
       ".film-details__top-container"
     );
     render(
-      new CommentsListView(this.films[1], this.comments),
+      new CommentsListView(this.films[1], this.#comments),
       filmDetailsContainer
     );
     render(new CommentFormView(this.films[1]), filmDetailsContainer);
