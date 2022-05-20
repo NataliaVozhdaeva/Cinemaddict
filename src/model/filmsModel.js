@@ -1,7 +1,7 @@
 import { generateFilm, generateComment } from "../mock/film.js";
 
 export default class FilmsModel {
-  #films = Array.from({ length: 5 }, generateFilm);
+  #films = Array.from({ length: 22 }, generateFilm);
   #comments = Array.from({ length: 5 }, generateComment);
   get films() {
     return this.#films;

@@ -1,15 +1,16 @@
 import { render } from "../render.js";
+//import SortListView from "./view/sortView.js";
 import FilmCardsContainerView from "../view/filmCardsContainerView";
 import FilmListView from "../view/filmListView";
 import FilmCardView from "../view/filmCardView";
 import ShowmoreBtn from "../view/showmoreBtnView";
-import FilmDetailsPresenter from "../presenter/filmDetailsPresenter";
-
 import FilmDetailsView from "../view/filmDetailsView";
-import CommentFormView from "../view/commentFormView";
 import CommentsListView from "../view/commentsListView";
+import NoFilmView from "../view/noFilmsView";
 
-const filmDetailsPresenter = new FilmDetailsPresenter();
+//const filmDetailsPresenter = new FilmDetailsPresenter();
+
+const FILMCARD_PER_STEP = 5;
 
 export default class FilmCardsPresenter {
   #filmSection = null;
@@ -17,42 +18,78 @@ export default class FilmCardsPresenter {
 
   #filmList = new FilmListView();
   #filmCardContainer = new FilmCardsContainerView();
+  #showMoreBtn = new ShowmoreBtn();
 
   #films = [];
+  #comments = [];
+  #renderedFilmCards = FILMCARD_PER_STEP;
 
   init = (filmSection, filmsModel) => {
     this.#filmSection = filmSection;
     this.#filmsModel = filmsModel;
 
     this.#films = [...this.#filmsModel.films];
-    this.allComments = [...this.#filmsModel.comments];
-    render(this.#filmList, this.#filmSection);
-    render(this.#filmCardContainer, this.#filmList.element);
+    this.#comments = [...this.#filmsModel.comments];
 
-    for (let i = 0; i < this.#films.length; i++) {
-      this.#renderFilmCard(this.#films[i], this.allComments);
+    if (this.#films.length === 0) {
+      render(new NoFilmView(), this.#filmSection);
+    } else {
+      render(this.#filmList, this.#filmSection);
+      render(this.#filmCardContainer, this.#filmList.element);
+
+      for (
+        let i = 0;
+        i < Math.min(this.#films.length, FILMCARD_PER_STEP);
+        i++
+      ) {
+        this.#renderFilmCard(this.#films[i], this.#comments);
+      }
+
+      if (this.#films.length > FILMCARD_PER_STEP) {
+        render(this.#showMoreBtn, this.#filmSection);
+
+        this.#showMoreBtn.element.addEventListener(
+          "click",
+          this.#handleShowMoreBtnClick
+        );
+      }
     }
+  };
 
-    /* let footer = document.querySelector(".footer");
-    filmDetailsPresenter.init(filmsModel, footer); */
+  #handleShowMoreBtnClick = (evt) => {
+    evt.preventDefault();
+    this.#films
+      .slice(
+        this.#renderedFilmCards,
+        this.#renderedFilmCards + FILMCARD_PER_STEP
+      )
+      .forEach((film) => this.#renderFilmCard(film, this.#comments));
 
-    render(new ShowmoreBtn(), this.#filmSection);
+    this.#renderedFilmCards += FILMCARD_PER_STEP;
+
+    if (this.#renderedFilmCards >= this.#films.length) {
+      this.#showMoreBtn.element.remove();
+      this.#showMoreBtn.removeElement();
+    }
   };
 
   #renderFilmCard = (film, actualComments) => {
     const filmCard = new FilmCardView(film);
     const filmDetailsComponent = new FilmDetailsView(film);
     const commentsListView = new CommentsListView(film, actualComments);
-    //console.log(commentsListView);
+
     let body = document.querySelector("body");
 
     const openFilmDetails = () => {
       body.appendChild(filmDetailsComponent.element);
+      filmDetailsComponent.element
+        .querySelector("form")
+        .appendChild(commentsListView.element);
 
-      render(
+      /*   render(
         commentsListView,
         filmDetailsComponent.element.querySelector("form")
-      );
+      ); */
     };
 
     const closeFilmDetails = () => {

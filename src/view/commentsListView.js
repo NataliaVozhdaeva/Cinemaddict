@@ -5,13 +5,12 @@ import { EMOGI } from "../const.js";
 function createCommentsListTemplate(film, allComments) {
   const { comments } = film;
   const { id, author, comment, date, emotion } = allComments;
+  console.log(comments);
 
   const actualComments = allComments.filter(({ id }) =>
     comments.some((commentId) => commentId === id)
   );
-  /* console.log(allComments);
-  console.log(actualComments); */
-
+  console.log(actualComments);
   const CommentDate = humanizeCommentDate(allComments[1].date);
 
   const createComments = (arr) =>

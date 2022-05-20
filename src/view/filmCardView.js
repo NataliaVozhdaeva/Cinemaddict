@@ -6,12 +6,6 @@ const createFilmTemplate = (film) => {
   const releaseDate = humanizeReliaseDate(filmInfo.release.date);
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
 
-  /*
-  const addActiveClassName = (argument) => {argument ? "film-card__controls-item--active" : ""};
-  пыталась написать тут функцию, которая присваивала бы класс активности кнопке. При вызове в разметке
-  класс добавлялся, но был undefined в devtools... 
-  */
-
   const addToWatchlistClassName = userDetails.watchlist
     ? " film-card__controls-item--active"
     : "";

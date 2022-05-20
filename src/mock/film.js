@@ -86,9 +86,15 @@ const generateId = () => {
   return id[randomIndex];
 };
 
+const generateActualComments = () => {
+  const actualComments = [["0"], ["1", "2"], ["3"]];
+  const randomIndex = getRandomInteger(0, actualComments.length - 1);
+  return actualComments[randomIndex];
+};
+
 const generateFilm = () => ({
   id: ["42"],
-  comments: ["0", "1"],
+  comments: generateActualComments(),
   filmInfo: {
     title: generateTitle(),
     alternative_title: "Laziness Who Sold Themselves",
