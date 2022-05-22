@@ -1,4 +1,4 @@
-import { createElement } from "../render.js";
+import { createElement } from '../render.js';
 
 const createShowmoreBtn = () =>
   `<button class="films-list__show-more">Show more</button> `;

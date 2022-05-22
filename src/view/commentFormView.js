@@ -1,6 +1,5 @@
-import { EMOGI } from "../const.js";
-import { createElement } from "../render.js";
-import { humanizeCommentDate } from "../utils.js";
+import { EMOGI } from '../const.js';
+import { createElement } from '../render.js';
 
 function createCommentsFormTemplate(film) {
   const { comments } = film;
@@ -17,7 +16,7 @@ function createCommentsFormTemplate(film) {
     <label class="film-details__emoji-label" for="emoji-${emogi}">
       <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
     </label>`
-    ).join("");
+    ).join('');
   const emogiList = createEmogiList(EMOGI);
 
   return `<div class="film-details__bottom-container">

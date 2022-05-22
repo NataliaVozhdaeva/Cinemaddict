@@ -1,16 +1,15 @@
-import { createElement } from "../render.js";
-import { humanizeCommentDate } from "../utils.js";
-import { EMOGI } from "../const.js";
+import { createElement } from '../render.js';
+import { humanizeCommentDate } from '../utils.js';
+import { EMOGI } from '../const.js';
 
 function createCommentsListTemplate(film, allComments) {
   const { comments } = film;
-  const { id, author, comment, date, emotion } = allComments;
-  console.log(comments);
+  //console.log(comments);
 
   const actualComments = allComments.filter(({ id }) =>
     comments.some((commentId) => commentId === id)
   );
-  console.log(actualComments);
+  // console.log(actualComments);
   const CommentDate = humanizeCommentDate(allComments[1].date);
 
   const createComments = (arr) =>
@@ -31,7 +30,7 @@ function createCommentsListTemplate(film, allComments) {
             </div>
           </li>`
       )
-      .join("");
+      .join('');
 
   const renderComments = createComments(actualComments);
 
@@ -47,7 +46,7 @@ function createCommentsListTemplate(film, allComments) {
     <label class="film-details__emoji-label" for="emoji-${emogi}">
       <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
     </label>`
-    ).join("");
+    ).join('');
 
   const emogiList = createEmogiList(EMOGI);
 

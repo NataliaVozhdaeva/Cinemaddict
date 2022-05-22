@@ -1,6 +1,5 @@
-//import { EMOGI } from "../const.js";
-import { createElement } from "../render.js";
-import { humanizeFullReliaseDate, humanizeFilmDuration } from "../utils.js";
+import { createElement } from '../render.js';
+import { humanizeFullReliaseDate, humanizeFilmDuration } from '../utils.js';
 
 function createFilmDetailsViewTemplate(film) {
   const { filmInfo, userDetails } = film;
@@ -10,7 +9,7 @@ function createFilmDetailsViewTemplate(film) {
 
   const createGenreCountTemplate = (genresCount) =>
     `<td class="film-details__term">
-    ${genresCount.length > 1 ? "Genres" : "Genre"}
+    ${genresCount.length > 1 ? 'Genres' : 'Genre'}
   </td>
   ${
     genresCount.length > 1
@@ -20,7 +19,7 @@ function createFilmDetailsViewTemplate(film) {
           ([genresCount, value]) => `
       <span class="film-details__genre">${value}</span>`
         )
-        .join("")}
+        .join('')}
     `
       : `<td class="film-details__cell">
       <span class="film-details__genre">${genresCount}</span>`
@@ -30,16 +29,16 @@ function createFilmDetailsViewTemplate(film) {
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
 
   const addToWatchlistClassName = userDetails.watchlist
-    ? "film-details__control-button--active"
-    : "";
+    ? 'film-details__control-button--active'
+    : '';
 
   const alreadyWatchedClassName = userDetails.already_watched
-    ? "film-details__control-button--active"
-    : "";
+    ? 'film-details__control-button--active'
+    : '';
 
   const favoriteClassName = userDetails.favorite
-    ? "film-details__control-button--active"
-    : "";
+    ? 'film-details__control-button--active'
+    : '';
 
   return `
   <section class="film-details">

@@ -1,7 +1,6 @@
-import { createElement } from "../render.js";
+import { createElement } from '../render.js';
 
-const createFilmCardsContainer = () =>
-  `<div class="films-list__container"></div> `;
+const createFilmCardsContainer = () => `<div class="films-list__container"></div> `;
 
 export default class FilmCardsContainerView {
   #element = null;
