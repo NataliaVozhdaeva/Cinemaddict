@@ -68,17 +68,12 @@ export default class FilmCardsPresenter {
     const filmCard = new FilmCardView(film);
     const filmDetailsComponent = new FilmDetailsView(film);
     const commentsListView = new CommentsListView(film, actualComments);
-
     let body = document.querySelector('body');
 
     const openFilmDetails = () => {
       let footer = document.querySelector('.footer');
       render(filmDetailsComponent, footer, 'afterend');
       render(commentsListView, filmDetailsComponent.element.querySelector('form'));
-      /* 
-      filmDetailsComponent.element
-        .querySelector('form')
-        .appendChild(commentsListView.element); */
     };
 
     const closeFilmDetails = () => {
@@ -97,11 +92,9 @@ export default class FilmCardsPresenter {
 
     filmCard.element.querySelector('.film-card__link').addEventListener('click', () => {
       if (document.querySelector('.film-details')) {
-        //this.closeFilmDetails();
-        /* filmDetailsComponent.remove();
-        filmDetailsComponent.removeElement(); */
-        body.removeChild(document.querySelector('.film-details'));
+        closeFilmDetails();
       }
+
       openFilmDetails();
       body.classList.add('hide-overflow');
       document.addEventListener('keydown', onEscKeyDown);
