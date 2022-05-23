@@ -32,7 +32,7 @@ function createFilmDetailsViewTemplate(film) {
     ? 'film-details__control-button--active'
     : '';
 
-  const alreadyWatchedClassName = userDetails.already_watched
+  const alreadyWatchedClassName = userDetails.alreadyWatched
     ? 'film-details__control-button--active'
     : '';
 
@@ -51,7 +51,7 @@ function createFilmDetailsViewTemplate(film) {
         <div class="film-details__poster">
           <img class="film-details__poster-img" src=${filmInfo.poster} alt="">
 
-          <p class="film-details__age">${filmInfo.age_rating}</p>
+          <p class="film-details__age">${filmInfo.ageRating}</p>
         </div>
 
         <div class="film-details__info">
@@ -89,7 +89,7 @@ function createFilmDetailsViewTemplate(film) {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
-              <td class="film-details__cell">${filmInfo.release.release_country}</td>
+              <td class="film-details__cell">${filmInfo.release.releaseCountry}</td>
             </tr>
             <tr class="film-details__row">${genres}
              

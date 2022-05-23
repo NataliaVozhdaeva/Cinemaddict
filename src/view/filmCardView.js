@@ -10,7 +10,7 @@ const createFilmTemplate = (film) => {
     ? ' film-card__controls-item--active'
     : '';
 
-  const alreadyWatchedClassName = userDetails.already_watched
+  const alreadyWatchedClassName = userDetails.alreadyWatched
     ? 'film-card__controls-item--active'
     : '';
 
