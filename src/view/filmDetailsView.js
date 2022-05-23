@@ -1,6 +1,5 @@
-//import { EMOGI } from "../const.js";
-import { createElement } from "../render.js";
-import { humanizeFullReliaseDate, humanizeFilmDuration } from "../utils.js";
+import { createElement } from '../render.js';
+import { humanizeFullReliaseDate, humanizeFilmDuration } from '../utils.js';
 
 function createFilmDetailsViewTemplate(film) {
   const { filmInfo, userDetails } = film;
@@ -10,7 +9,7 @@ function createFilmDetailsViewTemplate(film) {
 
   const createGenreCountTemplate = (genresCount) =>
     `<td class="film-details__term">
-    ${genresCount.length > 1 ? "Genres" : "Genre"}
+    ${genresCount.length > 1 ? 'Genres' : 'Genre'}
   </td>
   ${
     genresCount.length > 1
@@ -20,36 +19,29 @@ function createFilmDetailsViewTemplate(film) {
           ([genresCount, value]) => `
       <span class="film-details__genre">${value}</span>`
         )
-        .join("")}
+        .join('')}
     `
       : `<td class="film-details__cell">
       <span class="film-details__genre">${genresCount}</span>`
   }`;
 
   const genres = createGenreCountTemplate(genresCount);
-
-  /* 
-Вот эти четыре константы, которые идут ниже, уже вычислялись в filmCardView (для списка фильмов на главной),
-а тут (в Попапе) я, получается, делаю это еще раз. Но для того, чтобы он подхватил данные, уже вычисленные 
-в filmCardView, получается, мне в попап надо не данные с сервера передавать, а данные из въюхи. Но, опять же, 
-в короткой вьюхе фильма данных меньше, чем мне надо здесь, то есть сервер все равно подтягивать. Вот что,
-мне кажется, повторяется, но придумать как это все связать что-то не получается... Или это ок, и я зря морочусь?
-*/
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
 
   const addToWatchlistClassName = userDetails.watchlist
-    ? "film-details__control-button--active"
-    : "";
+    ? 'film-details__control-button--active'
+    : '';
 
-  const alreadyWatchedClassName = userDetails.already_watched
-    ? "film-details__control-button--active"
-    : "";
+  const alreadyWatchedClassName = userDetails.alreadyWatched
+    ? 'film-details__control-button--active'
+    : '';
 
   const favoriteClassName = userDetails.favorite
-    ? "film-details__control-button--active"
-    : "";
+    ? 'film-details__control-button--active'
+    : '';
 
-  return `<section class="film-details">
+  return `
+  <section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__top-container">
       <div class="film-details__close">
@@ -59,7 +51,7 @@ function createFilmDetailsViewTemplate(film) {
         <div class="film-details__poster">
           <img class="film-details__poster-img" src=${filmInfo.poster} alt="">
 
-          <p class="film-details__age">${filmInfo.age_rating}</p>
+          <p class="film-details__age">${filmInfo.ageRating}</p>
         </div>
 
         <div class="film-details__info">
@@ -97,7 +89,7 @@ function createFilmDetailsViewTemplate(film) {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
-              <td class="film-details__cell">${filmInfo.release.release_country}</td>
+              <td class="film-details__cell">${filmInfo.release.releaseCountry}</td>
             </tr>
             <tr class="film-details__row">${genres}
              
@@ -122,28 +114,33 @@ function createFilmDetailsViewTemplate(film) {
           id="favorite" name="favorite">Add to favorites
         </button>
       </section>
-    </div>`;
+    </div>
+  </form>
+  </section>`;
 }
 
 export default class FilmDetailsView {
+  #element = null;
+  #film = null;
+
   constructor(film) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createFilmDetailsViewTemplate(this.film);
+  get template() {
+    return createFilmDetailsViewTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
 

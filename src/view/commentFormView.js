@@ -1,5 +1,5 @@
-import { EMOGI } from "../const.js";
-import { createElement } from "../render.js";
+import { EMOGI } from '../const.js';
+import { createElement } from '../render.js';
 
 function createCommentsFormTemplate(film) {
   const { comments } = film;
@@ -16,7 +16,7 @@ function createCommentsFormTemplate(film) {
     <label class="film-details__emoji-label" for="emoji-${emogi}">
       <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
     </label>`
-    ).join("");
+    ).join('');
   const emogiList = createEmogiList(EMOGI);
 
   return `<div class="film-details__bottom-container">
@@ -42,31 +42,26 @@ function createCommentsFormTemplate(film) {
 }
 
 export default class CommentFormView {
+  #element = null;
+  #film = null;
+
   constructor(film) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createCommentsFormTemplate(this.film);
+  get template() {
+    return createCommentsFormTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
-
-/*
-
-<ul class="film-details__comments-list">
-            ${renderComments}
-          </ul> 
-          
-          */

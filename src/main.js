@@ -1,12 +1,12 @@
-import { render } from "./render.js";
-import NavView from "./view/navView";
-import SortListView from "./view/sortView.js";
-import UserSectionView from "./view/userView";
-import FilmCardsPresenter from "./presenter/filmcardsPresenter.js";
-import FilmsModel from "./model/filmsModel.js";
+import { render } from './render.js';
+import NavView from './view/navView';
+import SortListView from './view/sortView.js';
+import UserSectionView from './view/userView';
+import FilmCardsPresenter from './presenter/filmcardsPresenter.js';
+import FilmsModel from './model/filmsModel.js';
 
-const siteHeaderElement = document.querySelector(".header");
-const siteMainElement = document.querySelector(".main");
+const siteHeaderElement = document.querySelector('.header');
+const siteMainElement = document.querySelector('.main');
 const filmCardsPresenter = new FilmCardsPresenter();
 const filmsModel = new FilmsModel();
 

@@ -1,4 +1,4 @@
-import { createElement } from "../render.js";
+import { createElement } from '../render.js';
 
 const createNav = () =>
   `<nav class="main-navigation">
@@ -9,19 +9,21 @@ const createNav = () =>
   </nav> `;
 
 export default class NavView {
-  getTemplate() {
+  #element = null;
+
+  get template() {
     return createNav();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

@@ -1,3 +1,3 @@
-const EMOGI = ["smile", "sleeping", "puke", "angry"];
+const EMOGI = ['smile', 'sleeping', 'puke', 'angry'];
 
 export { EMOGI };

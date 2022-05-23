@@ -1,13 +1,15 @@
-import { createElement } from "../render.js";
-import { humanizeCommentDate } from "../utils.js";
+import { createElement } from '../render.js';
+import { humanizeCommentDate } from '../utils.js';
+import { EMOGI } from '../const.js';
 
 function createCommentsListTemplate(film, allComments) {
   const { comments } = film;
-  const { id, author, comment, date, emotion } = allComments;
+  //console.log(comments);
 
   const actualComments = allComments.filter(({ id }) =>
     comments.some((commentId) => commentId === id)
   );
+  // console.log(actualComments);
   const CommentDate = humanizeCommentDate(allComments[1].date);
 
   const createComments = (arr) =>
@@ -28,34 +30,72 @@ function createCommentsListTemplate(film, allComments) {
             </div>
           </li>`
       )
-      .join("");
+      .join('');
 
   const renderComments = createComments(actualComments);
 
-  return `<ul class="film-details__comments-list">
-            ${renderComments}
-          </ul>`;
+  const createEmogiList = () =>
+    EMOGI.map(
+      (emogi) => `
+    <input 
+      class="film-details__emoji-item visually-hidden" 
+      name="comment-emoji" 
+      type="radio" 
+      id="emoji-${emogi}" 
+      value="${emogi}">
+    <label class="film-details__emoji-label" for="emoji-${emogi}">
+      <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
+    </label>`
+    ).join('');
+
+  const emogiList = createEmogiList(EMOGI);
+
+  return `
+  <div class="film-details__bottom-container">
+    <section class="film-details__comments-wrap">
+      <h3 class="film-details__comments-title">
+        Comments <span class="film-details__comments-count">${comments.length}</span>
+      </h3>
+      <ul class="film-details__comments-list">
+        ${renderComments}
+      </ul>
+      <div class="film-details__new-comment">
+        <div class="film-details__add-emoji-label"></div>
+        <label class="film-details__comment-label">
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+        </label>
+        <div class="film-details__emoji-list">
+          ${emogiList}
+        </div>
+      </div>
+    </section>
+  </div>
+`;
 }
 
 export default class CommentsListView {
+  #element = null;
+  #film = null;
+  #comments = null;
+
   constructor(film, comments) {
-    this.film = film;
-    this.comments = comments;
+    this.#film = film;
+    this.#comments = comments;
   }
 
-  getTemplate() {
-    return createCommentsListTemplate(this.film, this.comments);
+  get template() {
+    return createCommentsListTemplate(this.#film, this.#comments);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
