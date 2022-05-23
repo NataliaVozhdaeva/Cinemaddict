@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render, RenderPosition } from '../render.js';
 //import SortListView from "./view/sortView.js";
 import FilmCardsContainerView from '../view/filmCardsContainerView';
 import FilmListView from '../view/filmListView';
@@ -72,13 +72,12 @@ export default class FilmCardsPresenter {
 
     const openFilmDetails = () => {
       let footer = document.querySelector('.footer');
-      render(filmDetailsComponent, footer, 'afterend');
+      render(filmDetailsComponent, footer, RenderPosition.AFTEREND);
       render(commentsListView, filmDetailsComponent.element.querySelector('form'));
     };
 
     const closeFilmDetails = () => {
-      filmDetailsComponent.element.remove();
-      filmDetailsComponent.removeElement();
+      body.removeChild(document.querySelector('.film-details'));
       body.classList.remove('hide-overflow');
     };
 
