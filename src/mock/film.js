@@ -47,10 +47,10 @@ const generateCommentContent = () => {
   const commentsTexts = [
     'Grate',
     'So-so',
-    "I didn't understood anything",
+    'I didnt understood anything',
     'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
     'Фигня ваше кино, мне Танька рассказывала',
-    "It's wonderful!",
+    'Its wonderful!',
     'Very bad',
     'But I was waiting for Chuk Norris...',
     'Almost two hours? Seriously?',
@@ -61,13 +61,7 @@ const generateCommentContent = () => {
 };
 
 const generateAuthor = () => {
-  const autors = [
-    "Ilya O'Reilly",
-    'John Dow',
-    'Will Smith',
-    'Jane Ostin',
-    "Volan d'Mort",
-  ];
+  const autors = ['Ilya OReilly', 'John Dow', 'Will Smith', 'Jane Ostin', 'Volan dMort'];
   const randomIndex = getRandomInteger(0, autors.length - 1);
 
   return autors[randomIndex];
@@ -97,16 +91,16 @@ const generateFilm = () => ({
   comments: generateActualComments(),
   filmInfo: {
     title: generateTitle(),
-    alternative_title: 'Laziness Who Sold Themselves',
+    alternativeTitle: 'Laziness Who Sold Themselves',
     totalRating: 5.3,
     poster: generatePoster(),
-    age_rating: 0,
+    ageRating: 0,
     director: 'Tom Ford',
     writers: ['Takeshi Kitano'],
     actors: ['Morgan Freeman, Cергей Безруков'],
     release: {
       date: '2019-05-11T00:00:00.000Z',
-      release_country: 'Finland',
+      releaseCountry: 'Finland',
     },
     runtime: 77,
     genre: ['Comedy', 'Music'],
@@ -114,8 +108,8 @@ const generateFilm = () => ({
   },
   userDetails: {
     watchlist: true,
-    already_watched: false,
-    watching_date: '2019-04-12T16:12:32.554Z',
+    alreadyWatched: false,
+    watchingDate: '2019-04-12T16:12:32.554Z',
     favorite: true,
   },
 });
