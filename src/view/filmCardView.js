@@ -6,17 +6,11 @@ const createFilmTemplate = (film) => {
   const releaseDate = humanizeReliaseDate(filmInfo.release.date);
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
 
-  const addToWatchlistClassName = userDetails.watchlist
-    ? ' film-card__controls-item--active'
-    : '';
+  const addToWatchlistClassName = userDetails.watchlist ? ' film-card__controls-item--active' : '';
 
-  const alreadyWatchedClassName = userDetails.alreadyWatched
-    ? 'film-card__controls-item--active'
-    : '';
+  const alreadyWatchedClassName = userDetails.alreadyWatched ? 'film-card__controls-item--active' : '';
 
-  const favoriteClassName = userDetails.favorite
-    ? 'film-card__controls-item--active'
-    : '';
+  const favoriteClassName = userDetails.favorite ? 'film-card__controls-item--active' : '';
 
   const createShotDescription = function (text) {
     if (text.length > 140) {
@@ -28,6 +22,7 @@ const createFilmTemplate = (film) => {
   };
 
   const description = createShotDescription(filmInfo.description);
+  const genres = filmInfo.genre.join(', ');
 
   return `<article class='film-card'>
           <a class='film-card__link'>
@@ -36,7 +31,7 @@ const createFilmTemplate = (film) => {
             <p class='film-card__info'>
               <span class='film-card__year'>${releaseDate}</span>
               <span class='film-card__duration'>${filmDuration}</span>
-              <span class='film-card__genre'>${filmInfo.genre}</span>
+              <span class='film-card__genre'>${genres}</span>
             </p>
             <img src=${filmInfo.poster} alt='' class='film-card__poster'>
             <p class='film-card__description'>${description}</p>
@@ -57,6 +52,7 @@ export default class FilmCardView {
   constructor(film) {
     this.#film = film;
   }
+
   get template() {
     return createFilmTemplate(this.#film);
   }
