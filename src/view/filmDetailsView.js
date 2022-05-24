@@ -12,17 +12,17 @@ function createFilmDetailsViewTemplate(film) {
     ${arr.length > 1 ? 'Genres' : 'Genre'}
     </td>
   ${
-    arr.length > 1
-      ? `<td class="film-details__cell">
+  arr.length > 1
+    ? `<td class="film-details__cell">
         ${Object.values(genresCount)
-          .map(
-            (value) => `
+    .map(
+      (value) => `
         <span class="film-details__genre">${value}</span>`
-          )
-          .join('')}`
-      : `<td class="film-details__cell">
+    )
+    .join('')}`
+    : `<td class="film-details__cell">
         <span class="film-details__genre">${genresCount}</span>`
-  }`;
+}`;
 
   const genres = createGenreCountTemplate(genresCount);
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
