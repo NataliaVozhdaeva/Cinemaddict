@@ -6,11 +6,9 @@ function createCommentsListTemplate(film, allComments) {
   const { comments } = film;
   //console.log(comments);
 
-  const actualComments = allComments.filter(({ id }) =>
-    comments.some((commentId) => commentId === id)
-  );
+  const actualComments = allComments.filter(({ id }) => comments.some((commentId) => commentId === id));
   // console.log(actualComments);
-  const CommentDate = humanizeCommentDate(allComments[1].date);
+  const CommentDate = humanizeCommentDate(allComments.date);
 
   const createComments = (arr) =>
     arr

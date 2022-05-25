@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -7,20 +7,20 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const humanizeReliaseDate = (releaseDate) => dayjs(releaseDate).format("YYYY");
+const humanizeReliaseDate = (releaseDate) => dayjs(releaseDate).format('YYYY');
 const humanizeFullReliaseDate = (releaseDate) =>
-  dayjs(releaseDate).format("DD MMMM YYYY");
+  dayjs(releaseDate).format('DD MMMM YYYY');
 
 const humanizeFilmDuration = (duration) => {
-  let hours = Math.trunc(duration / 60);
-  let minutes = duration % 60;
-  return hours + "h " + minutes + "m";
+  const hours = Math.trunc(duration / 60);
+  const minutes = duration % 60;
+  return `${hours  }h ${  minutes  }m`;
 };
 
 const isFilmChoose = (choose) => Object.values(choose).some(Boolean);
 
 const humanizeCommentDate = (commentDate) =>
-  dayjs(commentDate).format("YYYY/MM/DD HH:mm");
+  dayjs(commentDate).format('YYYY/MM/DD HH:mm');
 
 export {
   getRandomInteger,

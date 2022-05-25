@@ -1,1 +1,3 @@
 webpack.config.js
+src/render.js
+src/presenter/filmDetailsPresenter.js

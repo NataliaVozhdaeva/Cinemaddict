@@ -68,16 +68,17 @@ export default class FilmCardsPresenter {
     const filmCard = new FilmCardView(film);
     const filmDetailsComponent = new FilmDetailsView(film);
     const commentsListView = new CommentsListView(film, actualComments);
-    let body = document.querySelector('body');
+    const body = document.querySelector('body');
 
     const openFilmDetails = () => {
-      let footer = document.querySelector('.footer');
+      const footer = document.querySelector('.footer');
       render(filmDetailsComponent, footer, RenderPosition.AFTEREND);
       render(commentsListView, filmDetailsComponent.element.querySelector('form'));
     };
 
     const closeFilmDetails = () => {
-      body.removeChild(document.querySelector('.film-details'));
+      filmDetailsComponent.element.remove();
+      filmDetailsComponent.removeElement();
       body.classList.remove('hide-overflow');
     };
 
@@ -91,7 +92,7 @@ export default class FilmCardsPresenter {
 
     filmCard.element.querySelector('.film-card__link').addEventListener('click', () => {
       if (document.querySelector('.film-details')) {
-        closeFilmDetails();
+        body.removeChild(document.querySelector('.film-details'));
       }
 
       openFilmDetails();
@@ -99,13 +100,11 @@ export default class FilmCardsPresenter {
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    filmDetailsComponent.element
-      .querySelector('.film-details__close-btn')
-      .addEventListener('click', (evt) => {
-        evt.preventDefault();
-        closeFilmDetails();
-        document.removeEventListener('keydown', onEscKeyDown);
-      });
+    filmDetailsComponent.element.querySelector('.film-details__close-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      closeFilmDetails();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
 
     render(filmCard, this.#filmCardContainer.element);
   };

@@ -103,7 +103,7 @@ const generateFilm = () => ({
       releaseCountry: 'Finland',
     },
     runtime: 77,
-    genre: ['Comedy', 'Music'],
+    genre: ['Comedy', 'Music', 'Horror'],
     description: generateFilmDescription(),
   },
   userDetails: {

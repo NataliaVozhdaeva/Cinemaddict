@@ -5,40 +5,33 @@ function createFilmDetailsViewTemplate(film) {
   const { filmInfo, userDetails } = film;
 
   const fullReleaseDate = humanizeFullReliaseDate(filmInfo.release.date);
-  let genresCount = filmInfo.genre;
+  const genresCount = filmInfo.genre;
 
-  const createGenreCountTemplate = (genresCount) =>
+  const createGenreCountTemplate = (arr) =>
     `<td class="film-details__term">
-    ${genresCount.length > 1 ? 'Genres' : 'Genre'}
-  </td>
+    ${arr.length > 1 ? 'Genres' : 'Genre'}
+    </td>
   ${
-    genresCount.length > 1
-      ? `<td class="film-details__cell">
-      ${Object.entries(genresCount)
-        .map(
-          ([genresCount, value]) => `
-      <span class="film-details__genre">${value}</span>`
-        )
-        .join('')}
-    `
-      : `<td class="film-details__cell">
-      <span class="film-details__genre">${genresCount}</span>`
-  }`;
+  arr.length > 1
+    ? `<td class="film-details__cell">
+        ${Object.values(genresCount)
+    .map(
+      (value) => `
+        <span class="film-details__genre">${value}</span>`
+    )
+    .join('')}`
+    : `<td class="film-details__cell">
+        <span class="film-details__genre">${genresCount}</span>`
+}`;
 
   const genres = createGenreCountTemplate(genresCount);
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
 
-  const addToWatchlistClassName = userDetails.watchlist
-    ? 'film-details__control-button--active'
-    : '';
+  const addToWatchlistClassName = userDetails.watchlist ? 'film-details__control-button--active' : '';
 
-  const alreadyWatchedClassName = userDetails.alreadyWatched
-    ? 'film-details__control-button--active'
-    : '';
+  const alreadyWatchedClassName = userDetails.alreadyWatched ? 'film-details__control-button--active' : '';
 
-  const favoriteClassName = userDetails.favorite
-    ? 'film-details__control-button--active'
-    : '';
+  const favoriteClassName = userDetails.favorite ? 'film-details__control-button--active' : '';
 
   return `
   <section class="film-details">
@@ -157,7 +150,7 @@ export default class FilmDetailsView {
       <li class="film-details__comment">
          <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
-            </span> 
+            </span>
             <div>
               <p class="film-details__comment-text">${comment}</p>
               <p class="film-details__comment-info">
@@ -175,11 +168,11 @@ export default class FilmDetailsView {
   const createEmogiList = (currentEmogi) =>
     EMOGI.map(
       (emogi) => `
-    <input 
-      class="film-details__emoji-item visually-hidden" 
-      name="comment-emoji" 
-      type="radio" 
-      id="emoji-${emogi}" 
+    <input
+      class="film-details__emoji-item visually-hidden"
+      name="comment-emoji"
+      type="radio"
+      id="emoji-${emogi}"
       value="${emogi}">
       ${currentEmogi === emogi ? "checked" : ""}
     <label class="film-details__emoji-label" for="emoji-${emogi}">
