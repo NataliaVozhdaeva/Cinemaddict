@@ -1,13 +1,10 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeCommentDate } from '../utils.js';
 import { EMOGI } from '../const.js';
 
 function createCommentsListTemplate(film, allComments) {
   const { comments } = film;
-  //console.log(comments);
-
   const actualComments = allComments.filter(({ id }) => comments.some((commentId) => commentId === id));
-  // console.log(actualComments);
   const CommentDate = humanizeCommentDate(allComments.date);
 
   const createComments = (arr) =>
@@ -71,29 +68,17 @@ function createCommentsListTemplate(film, allComments) {
 `;
 }
 
-export default class CommentsListView {
-  #element = null;
+export default class CommentsListView extends AbstractView {
   #film = null;
   #comments = null;
 
   constructor(film, comments) {
+    super();
     this.#film = film;
     this.#comments = comments;
   }
 
   get template() {
     return createCommentsListTemplate(this.#film, this.#comments);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

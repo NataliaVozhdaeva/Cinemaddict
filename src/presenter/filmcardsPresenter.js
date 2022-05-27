@@ -1,4 +1,4 @@
-import { render, RenderPosition } from '../render.js';
+import { render, RenderPosition } from '../framework/render.js';
 //import SortListView from "./view/sortView.js";
 import FilmCardsContainerView from '../view/filmCardsContainerView';
 import FilmListView from '../view/filmListView';
@@ -45,13 +45,12 @@ export default class FilmCardsPresenter {
       if (this.#films.length > FILMCARD_PER_STEP) {
         render(this.#showMoreBtn, this.#filmSection);
 
-        this.#showMoreBtn.element.addEventListener('click', this.#handleShowMoreBtnClick);
+        this.#showMoreBtn.setClickHandler(this.#handleShowMoreBtnClick);
       }
     }
   };
 
-  #handleShowMoreBtnClick = (evt) => {
-    evt.preventDefault();
+  #handleShowMoreBtnClick = () => {
     this.#films
       .slice(this.#renderedFilmCards, this.#renderedFilmCards + FILMCARD_PER_STEP)
       .forEach((film) => this.#renderFilmCard(film, this.#comments));
@@ -72,7 +71,7 @@ export default class FilmCardsPresenter {
 
     const openFilmDetails = () => {
       const footer = document.querySelector('.footer');
-      render(filmDetailsComponent, footer, RenderPosition.AFTEREND);
+      render(filmDetailsComponent, footer, RenderPosition.BEFOREBEGIN);
       render(commentsListView, filmDetailsComponent.element.querySelector('form'));
     };
 
@@ -90,7 +89,7 @@ export default class FilmCardsPresenter {
       }
     };
 
-    filmCard.element.querySelector('.film-card__link').addEventListener('click', () => {
+    filmCard.setFilmDetailsHandler(() => {
       if (document.querySelector('.film-details')) {
         body.removeChild(document.querySelector('.film-details'));
       }
@@ -100,8 +99,7 @@ export default class FilmCardsPresenter {
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    filmDetailsComponent.element.querySelector('.film-details__close-btn').addEventListener('click', (evt) => {
-      evt.preventDefault();
+    filmDetailsComponent.setPopupCloseHandler(() => {
       closeFilmDetails();
       document.removeEventListener('keydown', onEscKeyDown);
     });

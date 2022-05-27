@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeFullReliaseDate, humanizeFilmDuration } from '../utils.js';
 
 function createFilmDetailsViewTemplate(film) {
@@ -112,11 +112,11 @@ function createFilmDetailsViewTemplate(film) {
   </section>`;
 }
 
-export default class FilmDetailsView {
-  #element = null;
+export default class FilmDetailsView extends AbstractView {
   #film = null;
 
   constructor(film) {
+    super();
     this.#film = film;
   }
 
@@ -124,61 +124,13 @@ export default class FilmDetailsView {
     return createFilmDetailsViewTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setPopupCloseHandler = (callback) => {
+    this._callback.popupClose = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupCloseHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #popupCloseHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.popupClose();
+  };
 }
-
-/* const CommentDate = humanizeCommentDate(allComments[1].date);
-
-  const actualComments = allComments.filter(({ id }) =>
-    comments.some((commentId) => commentId === id)
-  );
-
-  const createComments = (arr) =>
-    arr
-      .map(
-        ({ author, comment, emotion }) => `
-      <li class="film-details__comment">
-         <span class="film-details__comment-emoji">
-              <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
-            </span>
-            <div>
-              <p class="film-details__comment-text">${comment}</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">${author}</span>
-                <span class="film-details__comment-day">${CommentDate}</span>
-                <button class="film-details__comment-delete">Delete</button>
-              </p>
-            </div>
-          </li>`
-      )
-      .join("");
-
-  const renderComments = createComments(actualComments);
-
-  const createEmogiList = (currentEmogi) =>
-    EMOGI.map(
-      (emogi) => `
-    <input
-      class="film-details__emoji-item visually-hidden"
-      name="comment-emoji"
-      type="radio"
-      id="emoji-${emogi}"
-      value="${emogi}">
-      ${currentEmogi === emogi ? "checked" : ""}
-    <label class="film-details__emoji-label" for="emoji-${emogi}">
-      <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
-    </label>`
-    ).join("");
-
-  const emogiList = createEmogiList(emotion);
- */
