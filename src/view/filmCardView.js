@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeReliaseDate, humanizeFilmDuration } from '../utils.js';
+import { humanizeReliaseDate, humanizeFilmDuration } from '../utils/films.js';
 
 const createFilmTemplate = (film) => {
   const { filmInfo, userDetails, comments } = film;

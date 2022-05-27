@@ -1,4 +1,4 @@
-import { render, RenderPosition } from '../framework/render.js';
+import { render, RenderPosition, remove } from '../framework/render.js';
 //import SortListView from "./view/sortView.js";
 import FilmCardsContainerView from '../view/filmCardsContainerView';
 import FilmListView from '../view/filmListView';
@@ -58,8 +58,7 @@ export default class FilmCardsPresenter {
     this.#renderedFilmCards += FILMCARD_PER_STEP;
 
     if (this.#renderedFilmCards >= this.#films.length) {
-      this.#showMoreBtn.element.remove();
-      this.#showMoreBtn.removeElement();
+      remove(this.#showMoreBtn);
     }
   };
 
@@ -91,7 +90,8 @@ export default class FilmCardsPresenter {
 
     filmCard.setFilmDetailsHandler(() => {
       if (document.querySelector('.film-details')) {
-        body.removeChild(document.querySelector('.film-details'));
+        filmDetailsComponent.element.remove();
+        filmDetailsComponent.removeElement();
       }
 
       openFilmDetails();

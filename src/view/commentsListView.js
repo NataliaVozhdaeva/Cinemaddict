@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeCommentDate } from '../utils.js';
+import { humanizeCommentDate } from '../utils/films';
 import { EMOGI } from '../const.js';
 
 function createCommentsListTemplate(film, allComments) {
