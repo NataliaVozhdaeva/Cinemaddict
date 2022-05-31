@@ -108,10 +108,10 @@ const generateFilm = () => ({
     description: generateFilmDescription(),
   },
   userDetails: {
-    watchlist: true,
+    watchlist: false,
     alreadyWatched: false,
     watchingDate: '2019-04-12T16:12:32.554Z',
-    favorite: true,
+    favorite: false,
   },
 });
 

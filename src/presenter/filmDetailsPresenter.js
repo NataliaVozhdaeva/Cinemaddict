@@ -30,7 +30,9 @@ export default class FilmDetailsPresenter {
 
   init = (film, allComments) => {
     this.#film = film;
+    this.userDetails = film.userDetails;
     this.#allComments = allComments;
+    //console.log(this.userDetails);
 
     const prevFilmCard = this.#filmCard;
     const prevFilmDetailsComponent = this.#filmDetailsComponent;
@@ -51,16 +53,17 @@ export default class FilmDetailsPresenter {
       return;
     }
 
-    /*  if (this.#mode === Mode.DEFAULT) {
+    /* 
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#filmCard, prevFilmCard);
-    } */
-
-    /*   if (this.#mode === Mode.DETAILS) {
+    } 
+    
+    if (this.#mode === Mode.DETAILS) {
       replace(this.#filmDetailsComponent, prevFilmDetailsComponent);
-    } */
+    } 
 
     remove(prevFilmCard);
-    remove(prevFilmDetailsComponent);
+    remove(prevFilmDetailsComponent);*/
   };
 
   resetView = () => {
@@ -75,17 +78,21 @@ export default class FilmDetailsPresenter {
   };
 
   #favoriteClickHandler = () => {
-    this.#changeData({ ...this.#film, favorite: !this.#film.favorite });
+    this.#changeData({ ...this.#film, userDetails: { ...this.userDetails, favorite: !this.userDetails.favorite } });
+    console.log(this.userDetails);
   };
 
   #alreadyWatchedClickHandler = () => {
-    //const property = film.userDetails.alreadyWatched;
-    this.#changeData({ ...this.#film.userDetails, property: !this.#film.userDetails.alreadyWatched });
-    console.log(this.#film.userDetails);
+    this.#changeData({
+      ...this.#film,
+      userDetails: { ...this.userDetails, alreadyWatched: !this.userDetails.alreadyWatched },
+    });
+    console.log(this.userDetails);
   };
 
   #addToWatchListClickHandler = () => {
-    this.#changeData({ ...this.#film, watchlist: !this.#film.watchlist });
+    this.#changeData({ ...this.#film, userDetails: { ...this.userDetails, watchlist: !this.userDetails.watchlist } });
+    console.log(this.userDetails);
   };
 
   #openFilmDetails = () => {
@@ -99,7 +106,6 @@ export default class FilmDetailsPresenter {
   };
 
   #closeFilmDetails = () => {
-    //this.#changeData(this.#film);
     remove(this.#filmDetailsComponent);
     body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#escKeyDownHandler);
@@ -111,7 +117,6 @@ export default class FilmDetailsPresenter {
   };
 
   #closePopupHandler = (film) => {
-    //this.#changeData(film);
     this.#closeFilmDetails();
   };
 

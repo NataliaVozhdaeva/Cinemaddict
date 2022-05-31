@@ -53,7 +53,6 @@ export default class FilmCardsPresenter {
 
   #handlePreferenceChange = (updatedFilmCard) => {
     this.#films = updateItem(this.#films, updatedFilmCard);
-    //console.log(this.#filmDetailsPresenter.get(updatedFilmCard.id));
     this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
   };
 
@@ -67,7 +66,6 @@ export default class FilmCardsPresenter {
       this.#handlePreferenceChange,
       this.#handleModeChange
     );
-    //console.log(this.#handlePreferenceChange);
     filmDetailsPresenter.init(film, this.allComments);
     this.#filmDetailsPresenter.set(film.id, filmDetailsPresenter);
   };
