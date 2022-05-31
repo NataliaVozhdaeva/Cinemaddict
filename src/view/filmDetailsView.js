@@ -12,17 +12,17 @@ function createFilmDetailsViewTemplate(film) {
     ${arr.length > 1 ? 'Genres' : 'Genre'}
     </td>
   ${
-  arr.length > 1
-    ? `<td class="film-details__cell">
+    arr.length > 1
+      ? `<td class="film-details__cell">
         ${Object.values(genresCount)
-    .map(
-      (value) => `
+          .map(
+            (value) => `
         <span class="film-details__genre">${value}</span>`
-    )
-    .join('')}`
-    : `<td class="film-details__cell">
+          )
+          .join('')}`
+      : `<td class="film-details__cell">
         <span class="film-details__genre">${genresCount}</span>`
-}`;
+  }`;
 
   const genres = createGenreCountTemplate(genresCount);
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
@@ -124,6 +124,27 @@ export default class FilmDetailsView extends AbstractView {
     return createFilmDetailsViewTemplate(this.#film);
   }
 
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element
+      .querySelector('.film-card__controls-item--favorite')
+      .addEventListener('click', this.favoriteClickHandler);
+  };
+
+  setAlreadyWatchedClickHandler = (callback) => {
+    this._callback.alreadyWatchedClick = callback;
+    this.element
+      .querySelector('.film-card__controls-item--mark-as-watched')
+      .addEventListener('click', this.alreadyWatchedClickHandler);
+  };
+
+  setAddToWatchListClickHandler = (callback) => {
+    this._callback.addToWatchListClick = callback;
+    this.element
+      .querySelector('.film-card__controls-item--add-to-watchlist')
+      .addEventListener('click', this.addToWatchListClickHandler);
+  };
+
   setPopupCloseHandler = (callback) => {
     this._callback.popupClose = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupCloseHandler);
@@ -131,6 +152,24 @@ export default class FilmDetailsView extends AbstractView {
 
   #popupCloseHandler = (evt) => {
     evt.preventDefault();
-    this._callback.popupClose();
+    this._callback.popupClose(this.#film);
+  };
+
+  favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+    console.log('favoriteClick');
+  };
+
+  alreadyWatchedClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.alreadyWatchedClick();
+    console.log('alreadyWatchedClick');
+  };
+
+  addToWatchListClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.addToWatchListClick();
+    console.log('addToWatchList');
   };
 }

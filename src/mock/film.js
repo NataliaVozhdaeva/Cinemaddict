@@ -1,5 +1,6 @@
 import { getRandomInteger } from '../utils/common.js';
 import { EMOGI } from '../const.js';
+import { nanoid } from 'nanoid';
 
 const generateTitle = () => {
   const titles = [
@@ -87,7 +88,7 @@ const generateActualComments = () => {
 };
 
 const generateFilm = () => ({
-  id: ['42'],
+  id: nanoid(),
   comments: generateActualComments(),
   filmInfo: {
     title: generateTitle(),

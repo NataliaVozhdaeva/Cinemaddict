@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeReliaseDate, humanizeFilmDuration } from '../utils/films.js';
 
 const createFilmTemplate = (film) => {
-  const { filmInfo, userDetails, comments } = film;
+  const { id, filmInfo, userDetails, comments } = film;
   const releaseDate = humanizeReliaseDate(filmInfo.release.date);
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
 
@@ -23,7 +23,7 @@ const createFilmTemplate = (film) => {
 
   const description = createShotDescription(filmInfo.description);
   const genres = filmInfo.genre.join(', ');
-
+  //console.log(id);
   return `<article class='film-card'>
           <a class='film-card__link'>
             <h3 class='film-card__title'>${filmInfo.title}</h3>
@@ -62,8 +62,47 @@ export default class FilmCardView extends AbstractView {
     this.element.querySelector('.film-card__link').addEventListener('click', this.#showFilmDetailsClickHandler);
   };
 
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element
+      .querySelector('.film-card__controls-item--favorite')
+      .addEventListener('click', this.#favoriteClickHandler);
+  };
+
+  setAlreadyWatchedClickHandler = (callback) => {
+    this._callback.alreadyWatchedClick = callback;
+    this.element
+      .querySelector('.film-card__controls-item--mark-as-watched')
+      .addEventListener('click', this.#alreadyWatchedClickHandler);
+  };
+
+  setAddToWatchListClickHandler = (callback) => {
+    this._callback.addToWatchListClick = callback;
+    this.element
+      .querySelector('.film-card__controls-item--add-to-watchlist')
+      .addEventListener('click', this.#addToWatchListClickHandler);
+  };
+
   #showFilmDetailsClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.showFilmDetails();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+    console.log('favoriteClick');
+  };
+
+  #alreadyWatchedClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.alreadyWatchedClick();
+    console.log('alreadyWatchedClick');
+  };
+
+  #addToWatchListClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.addToWatchListClick();
+    console.log('addToWatchList');
   };
 }
