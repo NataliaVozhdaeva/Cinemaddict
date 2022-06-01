@@ -32,7 +32,6 @@ export default class FilmDetailsPresenter {
     this.#film = film;
     this.userDetails = film.userDetails;
     this.#allComments = allComments;
-    //console.log(this.userDetails);
 
     const prevFilmCard = this.#filmCard;
     const prevFilmDetailsComponent = this.#filmDetailsComponent;
@@ -47,23 +46,22 @@ export default class FilmDetailsPresenter {
     this.#filmCard.setAddToWatchListClickHandler(this.#handleAddToWatchListClick);
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
+    this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
+    this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
+    this.#filmDetailsComponent.setAddToWatchListClickHandlerOnFilmDetails(this.#handleAddToWatchListClick);
 
     if (prevFilmDetailsComponent === null || prevFilmCard === null) {
       render(this.#filmCard, this.#filmContainer);
       return;
     }
 
-    /* 
-    if (this.#mode === Mode.DEFAULT) {
+    if (this.#filmCard !== prevFilmCard.element) {
       replace(this.#filmCard, prevFilmCard);
-    } 
-    
-    if (this.#mode === Mode.DETAILS) {
-      replace(this.#filmDetailsComponent, prevFilmDetailsComponent);
-    } 
+    }
 
-    remove(prevFilmCard);
-    remove(prevFilmDetailsComponent);*/
+    if (this.#filmDetailsComponent !== prevFilmDetailsComponent.element) {
+      replace(this.#filmDetailsComponent, prevFilmDetailsComponent);
+    }
   };
 
   resetView = () => {
@@ -79,7 +77,6 @@ export default class FilmDetailsPresenter {
 
   #handleFavoriteClick = () => {
     this.#changeData({ ...this.#film, userDetails: { ...this.userDetails, favorite: !this.userDetails.favorite } });
-    console.log(this.userDetails);
   };
 
   #handleAlreadyWatchedClick = () => {
@@ -87,12 +84,10 @@ export default class FilmDetailsPresenter {
       ...this.#film,
       userDetails: { ...this.userDetails, alreadyWatched: !this.userDetails.alreadyWatched },
     });
-    console.log(this.userDetails);
   };
 
   #handleAddToWatchListClick = () => {
     this.#changeData({ ...this.#film, userDetails: { ...this.userDetails, watchlist: !this.userDetails.watchlist } });
-    console.log(this.userDetails);
   };
 
   #openFilmDetails = () => {
