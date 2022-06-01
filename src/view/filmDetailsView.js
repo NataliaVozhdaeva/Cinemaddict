@@ -12,17 +12,17 @@ function createFilmDetailsViewTemplate(film) {
     ${arr.length > 1 ? 'Genres' : 'Genre'}
     </td>
   ${
-    arr.length > 1
-      ? `<td class="film-details__cell">
+  arr.length > 1
+    ? `<td class="film-details__cell">
         ${Object.values(genresCount)
-          .map(
-            (value) => `
+    .map(
+      (value) => `
         <span class="film-details__genre">${value}</span>`
-          )
-          .join('')}`
-      : `<td class="film-details__cell">
+    )
+    .join('')}`
+    : `<td class="film-details__cell">
         <span class="film-details__genre">${genresCount}</span>`
-  }`;
+}`;
 
   const genres = createGenreCountTemplate(genresCount);
   const filmDuration = humanizeFilmDuration(filmInfo.runtime);
@@ -34,8 +34,7 @@ function createFilmDetailsViewTemplate(film) {
   const favoriteClassName = userDetails.favorite ? 'film-details__control-button--active' : '';
 
   return `
-  <section class="film-details">
-  <form class="film-details__inner" action="" method="get">
+  
     <div class="film-details__top-container">
       <div class="film-details__close">
         <button class="film-details__close-btn" type="button">close</button>
@@ -107,9 +106,7 @@ function createFilmDetailsViewTemplate(film) {
           id="favorite" name="favorite">Add to favorites
         </button>
       </section>
-    </div>
-  </form>
-  </section>`;
+    </div>`;
 }
 
 export default class FilmDetailsView extends AbstractView {

@@ -14,7 +14,7 @@ export default class FilmCardsPresenter {
   #filmsModel = null;
 
   #filmList = new FilmListView();
-  #filmCardContainer = new FilmCardsContainerView();
+  #filmCardsContainer = new FilmCardsContainerView();
   #showMoreBtn = new ShowmoreBtn();
   #sortComponent = new SortListView();
   #noFilmsComponent = new NoFilmView();
@@ -33,8 +33,7 @@ export default class FilmCardsPresenter {
   init = () => {
     this.#films = [...this.#filmsModel.films];
     this.allComments = [...this.#filmsModel.comments];
-    //console.log(this.#films);
-    //console.log(this.allComments);
+
     this.#renderFilmList();
   };
 
@@ -62,7 +61,7 @@ export default class FilmCardsPresenter {
 
   #renderOneFilmCard = (film) => {
     const filmDetailsPresenter = new FilmDetailsPresenter(
-      this.#filmCardContainer.element,
+      this.#filmCardsContainer.element,
       this.#handlePreferenceChange,
       this.#handleModeChange
     );
@@ -87,12 +86,12 @@ export default class FilmCardsPresenter {
   #clearFilmsContainer = () => {
     this.#filmDetailsPresenter.forEach((presenter) => presenter.destroy());
     this.#filmDetailsPresenter.clear();
-    this.#renderedFilmCards = TASK_COUNT_PER_STEP;
+    this.#renderedFilmCards = FILMCARD_PER_STEP;
     remove(this.#showMoreBtn);
   };
 
   #renderFilmCardContainer = () => {
-    render(this.#filmCardContainer, this.#filmList.element);
+    render(this.#filmCardsContainer, this.#filmList.element);
     this.#renderManyCards(0, Math.min(this.#films.length, FILMCARD_PER_STEP));
 
     if (this.#films.length > FILMCARD_PER_STEP) {

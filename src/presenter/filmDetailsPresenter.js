@@ -2,6 +2,7 @@ import { render, RenderPosition, remove, replace } from '../framework/render.js'
 import FilmCardView from '../view/filmCardView';
 import FilmDetailsView from '../view/filmDetailsView';
 import CommentsListView from '../view/commentsListView';
+import FilmDetailsFormView from '../view/filmDetailsFormView';
 
 const body = document.querySelector('body');
 const Mode = {
@@ -12,6 +13,7 @@ const Mode = {
 export default class FilmDetailsPresenter {
   #filmContainer = null;
 
+  #filmDetailsForm = null;
   #filmDetailsComponent = null;
   #filmCard = null;
 
@@ -35,10 +37,13 @@ export default class FilmDetailsPresenter {
 
     const prevFilmCard = this.#filmCard;
     const prevFilmDetailsComponent = this.#filmDetailsComponent;
+    const prevFilmDetailsForm = this.#filmDetailsForm;
+    const prevCommentsList = this.commentsList;
 
     this.#filmCard = new FilmCardView(film);
     this.#filmDetailsComponent = new FilmDetailsView(film);
     this.commentsList = new CommentsListView(film, allComments);
+    this.#filmDetailsForm = new FilmDetailsFormView();
 
     this.#filmCard.setFilmDetailsHandler(this.#openDetailsClickHandler);
     this.#filmCard.setFavoriteClickHandler(this.#handleFavoriteClick);
@@ -46,7 +51,7 @@ export default class FilmDetailsPresenter {
     this.#filmCard.setAddToWatchListClickHandler(this.#handleAddToWatchListClick);
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
-    this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
+    this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClickOnFilmDetails);
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
     this.#filmDetailsComponent.setAddToWatchListClickHandlerOnFilmDetails(this.#handleAddToWatchListClick);
 
@@ -60,8 +65,15 @@ export default class FilmDetailsPresenter {
     }
 
     if (this.#filmDetailsComponent !== prevFilmDetailsComponent.element) {
+      this.#filmDetailsForm = prevFilmDetailsForm;
+      this.commentsList = prevCommentsList;
       replace(this.#filmDetailsComponent, prevFilmDetailsComponent);
     }
+  };
+
+  #renderFilmDetailsForm = () => {
+    const footer = document.querySelector('.footer');
+    render(this.#filmDetailsForm, footer, RenderPosition.BEFOREBEGIN);
   };
 
   resetView = () => {
@@ -72,10 +84,14 @@ export default class FilmDetailsPresenter {
 
   destroy = () => {
     remove(this.#filmCard);
-    remove(this.#filmDetailsComponent);
+    remove(this.#filmDetailsForm);
   };
 
   #handleFavoriteClick = () => {
+    this.#changeData({ ...this.#film, userDetails: { ...this.userDetails, favorite: !this.userDetails.favorite } });
+  };
+
+  #handleFavoriteClickOnFilmDetails = () => {
     this.#changeData({ ...this.#film, userDetails: { ...this.userDetails, favorite: !this.userDetails.favorite } });
   };
 
@@ -91,17 +107,17 @@ export default class FilmDetailsPresenter {
   };
 
   #openFilmDetails = () => {
-    const footer = document.querySelector('.footer');
-    render(this.#filmDetailsComponent, footer, RenderPosition.BEFOREBEGIN);
-    render(this.commentsList, document.querySelector('.film-details__inner'));
-    body.classList.add('hide-overflow');
-    document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#changeMode();
     this.#mode = Mode.DETAILS;
+    this.#renderFilmDetailsForm();
+    render(this.#filmDetailsComponent, this.#filmDetailsForm.element);
+    render(this.commentsList, this.#filmDetailsForm.element);
+    body.classList.add('hide-overflow');
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #closeFilmDetails = () => {
-    remove(this.#filmDetailsComponent);
+    remove(this.#filmDetailsForm);
     body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
