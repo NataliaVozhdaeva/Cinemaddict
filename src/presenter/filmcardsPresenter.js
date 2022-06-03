@@ -12,12 +12,15 @@ export default class FilmCardsPresenter {
   }
 
   init = (film) => {
-    this.film = film;
-
-    this.renderOneFilmCard(this.film);
+    this.#film = new FilmCardView(film);
   };
 
-  renderOneFilmCard = (film) => {
+  get element() {
+    return this.#film;
+  }
+
+  #renderPopup = (film) => {
+    //render(this.#filmCardsContainer, this.#filmList.element);
     const filmDetailsPresenter = new FilmDetailsPresenter(
       this.filmCardsContainer,
       this.#handlePreferenceChange,

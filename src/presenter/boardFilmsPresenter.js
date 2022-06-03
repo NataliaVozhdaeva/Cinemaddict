@@ -1,5 +1,5 @@
 import { render, remove } from '../framework/render.js';
-import { updateItem } from '../utils/common.js';
+//import { updateItem } from '../utils/common.js';
 import SortListView from '../view/sortView.js';
 import FilmCardsContainerView from '../view/filmCardsContainerView';
 import FilmListView from '../view/filmListView';
@@ -22,8 +22,6 @@ export default class BoardFilmsPresenter {
   #films = [];
   #allComments = [];
   #renderedFilmCards = FILMCARD_PER_STEP;
-
-  #filmDetailsPresenter = new Map();
 
   constructor(filmSection, filmsModel) {
     this.#filmSection = filmSection;
@@ -61,11 +59,13 @@ export default class BoardFilmsPresenter {
   };
 
   #renderManyCards = (from, to) => {
-    const filmCardsPresenter = new FilmCardsPresenter(this.#filmCardsContainer);
-    filmCardsPresenter.init(this.film);
     this.#films.slice(from, to).forEach((film) => film.renderOneFilmCard(film));
+  };
 
-    // console.log(this.#films);
+  renderOneFilmCard = (film) => {
+    const filmCardsPresenter = new FilmCardsPresenter();
+    filmCardsPresenter.init(film, actualComments);
+    render(filmCardsPresenter.element, this.filmCardContainer.element);
   };
 
   #renderFilmCardContainer = () => {
@@ -75,10 +75,6 @@ export default class BoardFilmsPresenter {
     if (this.#films.length > FILMCARD_PER_STEP) {
       this.#renderShowMoreBtn();
     }
-
-    const filmCardPresenter = new FilmCardPresenter(this.#filmCardsContainer.element);
-
-    filmCardPresenter.init(film, this.allComments);
   };
 
   #renderFilmList = () => {
@@ -91,6 +87,7 @@ export default class BoardFilmsPresenter {
 
     this.#renderSort();
     this.#renderFilmCardContainer();
+    this.renderOneFilmCard(film);
   };
 }
 

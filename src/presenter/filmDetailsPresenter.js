@@ -51,7 +51,7 @@ export default class FilmDetailsPresenter {
     this.#filmCard.setAddToWatchListClickHandler(this.#handleAddToWatchListClick);
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
-    this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClickOnFilmDetails);
+    this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
     this.#filmDetailsComponent.setAddToWatchListClickHandlerOnFilmDetails(this.#handleAddToWatchListClick);
 
@@ -88,10 +88,6 @@ export default class FilmDetailsPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({ ...this.#film, userDetails: { ...this.userDetails, favorite: !this.userDetails.favorite } });
-  };
-
-  #handleFavoriteClickOnFilmDetails = () => {
     this.#changeData({ ...this.#film, userDetails: { ...this.userDetails, favorite: !this.userDetails.favorite } });
   };
 
