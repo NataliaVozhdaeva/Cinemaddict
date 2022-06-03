@@ -1,12 +1,43 @@
 import { render, remove } from '../framework/render.js';
 import { updateItem } from '../utils/common.js';
-import SortListView from '../view/sortView.js';
-import FilmCardsContainerView from '../view/filmCardsContainerView';
-import FilmListView from '../view/filmListView';
-import ShowmoreBtn from '../view/showmoreBtnView';
-import NoFilmView from '../view/noFilmsView';
 import FilmDetailsPresenter from './filmDetailsPresenter';
 
+export default class FilmCardsPresenter {
+  filmContainer = null;
+
+  #filmDetailsPresenter = new Map();
+
+  constructor(filmContainer) {
+    this.filmContainer = filmContainer;
+  }
+
+  init = (film) => {
+    this.film = film;
+
+    this.renderOneFilmCard(this.film);
+  };
+
+  renderOneFilmCard = (film) => {
+    const filmDetailsPresenter = new FilmDetailsPresenter(
+      this.filmCardsContainer,
+      this.#handlePreferenceChange,
+      this.#handleModeChange
+    );
+    filmDetailsPresenter.init(film, this.allComments);
+    this.#filmDetailsPresenter.set(film.id, filmDetailsPresenter);
+  };
+
+  #handleModeChange = () => {
+    this.#filmDetailsPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePreferenceChange = (updatedFilmCard) => {
+    this.films = updateItem(this.films, updatedFilmCard);
+    this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
+  };
+}
+
+/* 
 const FILMCARD_PER_STEP = 5;
 
 export default class FilmCardsPresenter {
@@ -55,10 +86,6 @@ export default class FilmCardsPresenter {
     this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
   };
 
-  #renderSort = () => {
-    render(this.#sortComponent, this.#filmList.element);
-  };
-
   #renderOneFilmCard = (film) => {
     const filmDetailsPresenter = new FilmDetailsPresenter(
       this.#filmCardsContainer.element,
@@ -71,6 +98,7 @@ export default class FilmCardsPresenter {
 
   #renderManyCards = (from, to) => {
     this.#films.slice(from, to).forEach((film) => this.#renderOneFilmCard(film));
+    // console.log(this.#films);
   };
 
   #renderNoFilms = () => {
@@ -110,4 +138,4 @@ export default class FilmCardsPresenter {
     this.#renderSort();
     this.#renderFilmCardContainer();
   };
-}
+} */
