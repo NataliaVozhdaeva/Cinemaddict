@@ -1,4 +1,4 @@
-import { render, RenderPosition, remove, replace } from '../framework/render.js';
+/* import { render, RenderPosition, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/filmCardView';
 import FilmDetailsView from '../view/filmDetailsView';
 import CommentsListView from '../view/commentsListView';
@@ -40,7 +40,7 @@ export default class FilmDetailsPresenter {
     const prevFilmDetailsForm = this.#filmDetailsForm;
     const prevCommentsList = this.commentsList;
 
-    this.#filmCard = new FilmCardView(film);
+    
     this.#filmDetailsComponent = new FilmDetailsView(film);
     this.commentsList = new CommentsListView(film, allComments);
     this.#filmDetailsForm = new FilmDetailsFormView();
@@ -134,3 +134,4 @@ export default class FilmDetailsPresenter {
     }
   };
 }
+ */

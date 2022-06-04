@@ -5,7 +5,7 @@ import FilmCardsContainerView from '../view/filmCardsContainerView';
 import FilmListView from '../view/filmListView';
 import ShowmoreBtn from '../view/showmoreBtnView';
 import NoFilmView from '../view/noFilmsView';
-import FilmCardsPresenter from './filmcardsPresenter';
+import CardsPresenter from './cardsPresenter';
 
 const FILMCARD_PER_STEP = 5;
 
@@ -20,7 +20,6 @@ export default class BoardFilmsPresenter {
   #noFilmsComponent = new NoFilmView();
 
   #films = [];
-  #allComments = [];
   #renderedFilmCards = FILMCARD_PER_STEP;
 
   constructor(filmSection, filmsModel) {
@@ -54,18 +53,17 @@ export default class BoardFilmsPresenter {
 
   #renderShowMoreBtn = () => {
     render(this.#showMoreBtn, this.#filmList.element);
-
     this.#showMoreBtn.setClickHandler(this.#handleShowMoreBtnClick);
   };
 
-  #renderManyCards = (from, to) => {
-    this.#films.slice(from, to).forEach((film) => film.renderOneFilmCard(film));
+  #renderOneFilmCard = (film) => {
+    const cardsPresenter = new CardsPresenter(this.#filmCardsContainer.element);
+    cardsPresenter.init(film);
+    //render(cardsPresenter.element, this.filmCardContainer.element);
   };
 
-  renderOneFilmCard = (film) => {
-    const filmCardsPresenter = new FilmCardsPresenter();
-    filmCardsPresenter.init(film, actualComments);
-    render(filmCardsPresenter.element, this.filmCardContainer.element);
+  #renderManyCards = (from, to) => {
+    this.#films.slice(from, to).forEach((film) => this.#renderOneFilmCard(film));
   };
 
   #renderFilmCardContainer = () => {
@@ -87,8 +85,17 @@ export default class BoardFilmsPresenter {
 
     this.#renderSort();
     this.#renderFilmCardContainer();
-    this.renderOneFilmCard(film);
+    // this.renderOneFilmCard(film);
   };
+
+  /*   #handleModeChange = () => {
+    this.#filmDetailsPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePreferenceChange = (updatedFilmCard) => {
+    this.films = updateItem(this.films, updatedFilmCard);
+    this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
+  }; */
 }
 
 /*  #clearFilmsContainer = () => {
