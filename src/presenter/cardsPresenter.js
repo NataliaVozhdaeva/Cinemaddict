@@ -1,33 +1,55 @@
-import { render } from '../framework/render.js';
-
+import { render, replace, remove } from '../framework/render.js';
 //import { updateItem } from '../utils/common.js';
 import FilmCardView from '../view/filmCardView';
 import FilmDetailsPresenter from './filmDetailsPresenter';
 
 const body = document.querySelector('body');
 const footer = document.querySelector('footer');
+const mode = {
+  DEFAULT: 'DEFAULT',
+  DETAILS: 'DETAILS',
+};
 
 export default class CardsPresenter {
   #filmCardContainer = null;
   #filmCard = null;
   #film = null;
-
+  #userDetails = null;
+  #changeData = null;
+  #changeMode = null;
+  #mode = null;
   #allComments = [];
 
-  constructor(filmCardContainer) {
+  constructor(filmCardContainer, changeData, changeMode) {
     this.#filmCardContainer = filmCardContainer;
+    this.#changeData = changeData;
+    this.#changeMode = changeMode;
+    /* this.updatedFilmCard = updatedFilmCard; */
   }
 
-  init = (film, allComments) => {
+  init = (film, allComments, updatedFilmCard) => {
     this.#film = film;
+    this.#userDetails = film.userDetails;
     this.#allComments = allComments;
+    this.updatedFilmCard = updatedFilmCard;
+
+    const prevFilmCard = this.#filmCard;
+
     this.#filmCard = new FilmCardView(film);
 
     this.#filmCard.setFilmDetailsHandler(this.#openFilmDetails);
+    this.#filmCard.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#filmCard.setAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
+    this.#filmCard.setAddToWatchListClickHandler(this.#handleAddToWatchListClick);
 
-    render(this.#filmCard, this.#filmCardContainer);
-    /*   console.log(this.#allComments);
-    console.log(this.#film); */
+    if (prevFilmCard === null) {
+      render(this.#filmCard, this.#filmCardContainer);
+      return;
+    }
+
+    if (this.#filmCard !== prevFilmCard.element) {
+      replace(this.#filmCard, prevFilmCard);
+    }
   };
 
   get element() {
@@ -35,54 +57,47 @@ export default class CardsPresenter {
   }
 
   #openFilmDetails = () => {
-    const filmDetailsPresenter = new FilmDetailsPresenter(footer);
-    /* console.log(this.#allComments);
-    console.log(this.#film); */
-    filmDetailsPresenter.init(this.film, this.#allComments);
-    /* 
-    this.#renderFilmDetailsForm();
-    render(this.#filmDetailsComponent, this.#filmDetailsForm.element);
-    render(this.commentsList, this.#filmDetailsForm.element); */
+    const filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#changeData, this.#changeMode);
+    this.#changeMode();
+    this.#mode = mode.DETAILS;
+    filmDetailsPresenter.init(this.#film, this.#allComments);
     body.classList.add('hide-overflow');
-    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #closeFilmDetails = () => {
-    console.log('close FD');
-    /*  remove(this.#filmDetailsForm);
-    body.classList.remove('hide-overflow');
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
-    this.#mode = Mode.DEFAULT; */
+  #handleFavoriteClick = () => {
+    this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite } });
   };
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
+  #handleAlreadyWatchedClick = () => {
+    this.#changeData({
+      ...this.#film,
+      userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
+    });
+  };
+
+  #handleAddToWatchListClick = () => {
+    this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist } });
+  };
+
+  resetView = () => {
+    if (this.#mode !== mode.DEFAULT) {
       this.#closeFilmDetails();
     }
   };
 
-  /* #replaceCardToForm = () => {
-    replace(this.#taskEditComponent, this.#taskComponent);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
+  #closeFilmDetails = () => {
+    body.classList.remove('hide-overflow');
+    remove(this.filmDetailsPresenter);
+
+    //document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = mode.DEFAULT;
   };
 
-  #replaceFormToCard = () => {
-    replace(this.#taskComponent, this.#taskEditComponent);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
-  }; 
-*/
+  destroy = () => {
+    remove(this.#filmCard);
+  };
 }
-/*   #renderPopup = (film) => {
-    //render(this.#filmCardsContainer, this.#filmList.element);
-    const filmDetailsPresenter = new FilmDetailsPresenter(
-      this.filmCardsContainer,
-      this.#handlePreferenceChange,
-      this.#handleModeChange
-    );
-    filmDetailsPresenter.init(film, this.allComments);
-    this.#filmDetailsPresenter.set(film.id, filmDetailsPresenter);
-  }; */
+
 /* 
 const FILMCARD_PER_STEP = 5;
 
