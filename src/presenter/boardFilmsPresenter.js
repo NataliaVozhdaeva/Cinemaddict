@@ -58,8 +58,7 @@ export default class BoardFilmsPresenter {
 
   #renderOneFilmCard = (film) => {
     const cardsPresenter = new CardsPresenter(this.#filmCardsContainer.element);
-    cardsPresenter.init(film);
-    //render(cardsPresenter.element, this.filmCardContainer.element);
+    cardsPresenter.init(film, this.allComments);
   };
 
   #renderManyCards = (from, to) => {
@@ -85,7 +84,6 @@ export default class BoardFilmsPresenter {
 
     this.#renderSort();
     this.#renderFilmCardContainer();
-    // this.renderOneFilmCard(film);
   };
 
   /*   #handleModeChange = () => {

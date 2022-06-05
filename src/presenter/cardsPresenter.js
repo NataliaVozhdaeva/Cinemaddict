@@ -1,25 +1,33 @@
-import { render, remove } from '../framework/render.js';
-//import FilmDetailsPresenter from './filmDetailsPresenter';
+import { render } from '../framework/render.js';
+
 //import { updateItem } from '../utils/common.js';
 import FilmCardView from '../view/filmCardView';
+import FilmDetailsPresenter from './filmDetailsPresenter';
+
+const body = document.querySelector('body');
+const footer = document.querySelector('footer');
 
 export default class CardsPresenter {
   #filmCardContainer = null;
   #filmCard = null;
   #film = null;
 
+  #allComments = [];
+
   constructor(filmCardContainer) {
     this.#filmCardContainer = filmCardContainer;
   }
 
-  init = (film) => {
+  init = (film, allComments) => {
     this.#film = film;
-
+    this.#allComments = allComments;
     this.#filmCard = new FilmCardView(film);
 
     this.#filmCard.setFilmDetailsHandler(this.#openFilmDetails);
 
     render(this.#filmCard, this.#filmCardContainer);
+    /*   console.log(this.#allComments);
+    console.log(this.#film); */
   };
 
   get element() {
@@ -27,6 +35,10 @@ export default class CardsPresenter {
   }
 
   #openFilmDetails = () => {
+    const filmDetailsPresenter = new FilmDetailsPresenter(footer);
+    /* console.log(this.#allComments);
+    console.log(this.#film); */
+    filmDetailsPresenter.init(this.film, this.#allComments);
     /* 
     this.#renderFilmDetailsForm();
     render(this.#filmDetailsComponent, this.#filmDetailsForm.element);

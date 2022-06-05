@@ -1,3 +1,31 @@
+import FilmDetailsView from '../view/filmDetailsView';
+import CommentsListView from '../view/commentsListView';
+import FilmDetailsFormView from '../view/filmDetailsFormView';
+
+import { render, RenderPosition, remove, replace } from '../framework/render.js';
+
+export default class FilmDetailsPresenter {
+  #filmDetailsContainer = null;
+  //#filmDetailsView = null;
+  #film = null;
+  #allComments = [];
+
+  constructor(filmDetailsContainer) {
+    this.#filmDetailsContainer = filmDetailsContainer;
+  }
+
+  init = (film, allComments) => {
+    this.#film = film;
+    this.#allComments = allComments;
+
+    this.filmDetailsComponent = new FilmDetailsView(this.#film);
+    this.commentsList = new CommentsListView(this.#film, this.#allComments);
+    this.filmDetailsForm = new FilmDetailsFormView();
+
+    render(this.filmDetailsComponent, this.#filmDetailsContainer);
+  };
+}
+
 /* import { render, RenderPosition, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/filmCardView';
 import FilmDetailsView from '../view/filmDetailsView';
