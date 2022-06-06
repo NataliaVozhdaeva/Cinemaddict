@@ -1,4 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
+
 //import { updateItem } from '../utils/common.js';
 import FilmCardView from '../view/filmCardView';
 import FilmDetailsPresenter from './filmDetailsPresenter';
@@ -17,8 +18,9 @@ export default class CardsPresenter {
   #userDetails = null;
   #changeData = null;
   #changeMode = null;
-  #mode = null;
+  #mode = mode.DEFAULT;
   #allComments = [];
+  #filmDetailsPresenter = null;
 
   constructor(filmCardContainer, changeData, changeMode) {
     this.#filmCardContainer = filmCardContainer;
@@ -36,6 +38,7 @@ export default class CardsPresenter {
     const prevFilmCard = this.#filmCard;
 
     this.#filmCard = new FilmCardView(film);
+    this.#filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#changeData, this.#changeMode);
 
     this.#filmCard.setFilmDetailsHandler(this.#openFilmDetails);
     this.#filmCard.setFavoriteClickHandler(this.#handleFavoriteClick);
@@ -81,16 +84,11 @@ export default class CardsPresenter {
 
   resetView = () => {
     if (this.#mode !== mode.DEFAULT) {
-      this.#closeFilmDetails();
+      /*  const filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#changeData, this.#changeMode);
+      filmDetailsPresenter.init(this.#film, this.#allComments);
+    } */
+      this.#filmDetailsPresenter.init(this.#film, this.#allComments);
     }
-  };
-
-  #closeFilmDetails = () => {
-    body.classList.remove('hide-overflow');
-    remove(this.filmDetailsPresenter);
-
-    //document.removeEventListener('keydown', this.#escKeyDownHandler);
-    this.#mode = mode.DEFAULT;
   };
 
   destroy = () => {

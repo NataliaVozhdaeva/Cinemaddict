@@ -4,7 +4,6 @@ import FilmDetailsFormView from '../view/filmDetailsFormView';
 
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 
-const body = document.querySelector('body');
 const mode = {
   DEFAULT: 'DEFAULT',
   DETAILS: 'DETAILS',
@@ -78,9 +77,9 @@ export default class FilmDetailsPresenter {
   };
 
   #closeFilmDetails = () => {
-    body.classList.remove('hide-overflow');
+    const body = document.querySelector('body');
     remove(this.#filmDetailsForm);
-
+    body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = mode.DEFAULT;
   };
