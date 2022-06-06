@@ -6,14 +6,17 @@ import FilmListView from '../view/filmListView';
 import ShowmoreBtn from '../view/showmoreBtnView';
 import NoFilmView from '../view/noFilmsView';
 import CardsPresenter from './cardsPresenter';
+import FilmDetailsPresenter from './filmDetailsPresenter.js';
 
 const FILMCARD_PER_STEP = 5;
+const footer = document.querySelector('footer');
 
 export default class BoardFilmsPresenter {
   #filmSection = null;
   #filmsModel = null;
 
   #cardsPresenter = new Map();
+  #filmDetailsPresenter = new Map();
 
   #filmList = new FilmListView();
   #filmCardsContainer = new FilmCardsContainerView();
@@ -62,11 +65,14 @@ export default class BoardFilmsPresenter {
     const cardsPresenter = new CardsPresenter(
       this.#filmCardsContainer.element,
       this.#handlePreferenceChange,
-      this.#handleModeChange
+      this.#handleModeChange,
+      this.filmDetailsPresenter
     );
-
     cardsPresenter.init(film, this.allComments);
     this.#cardsPresenter.set(film.id, cardsPresenter);
+
+    const filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#handlePreferenceChange, this.#handleModeChange);
+    this.#filmDetailsPresenter.set(film.id, filmDetailsPresenter);
   };
 
   #renderManyCards = (from, to) => {
@@ -97,10 +103,12 @@ export default class BoardFilmsPresenter {
   #handlePreferenceChange = (updatedFilmCard) => {
     this.#films = updateItem(this.#films, updatedFilmCard);
     this.#cardsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
+    //this.#filmDetailsPresenter.get(updatedFilmCard.id);
   };
 
   #handleModeChange = () => {
-    this.#cardsPresenter.forEach((presenter) => presenter.resetView());
+    //this.#cardsPresenter.forEach((presenter) => presenter.resetView());
+    this.#filmDetailsPresenter.forEach((presenter) => presenter.resetView());
   };
 
   /*   #handleModeChange = () => {

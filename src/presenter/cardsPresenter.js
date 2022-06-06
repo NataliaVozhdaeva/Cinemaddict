@@ -4,7 +4,6 @@ import { render, replace, remove } from '../framework/render.js';
 import FilmCardView from '../view/filmCardView';
 import FilmDetailsPresenter from './filmDetailsPresenter';
 
-const body = document.querySelector('body');
 const footer = document.querySelector('footer');
 const mode = {
   DEFAULT: 'DEFAULT',
@@ -18,22 +17,24 @@ export default class CardsPresenter {
   #userDetails = null;
   #changeData = null;
   #changeMode = null;
-  #mode = mode.DEFAULT;
   #allComments = [];
   #filmDetailsPresenter = null;
+  #mode = mode.DEFAULT;
+  //#updatedFilmCard = null;
 
-  constructor(filmCardContainer, changeData, changeMode) {
+  constructor(filmCardContainer, changeData, changeMode, filmDetailsPresenter) {
     this.#filmCardContainer = filmCardContainer;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
-    /* this.updatedFilmCard = updatedFilmCard; */
+    this.#filmDetailsPresenter = filmDetailsPresenter;
+    // this.#updatedFilmCard = updatedFilmCard;
   }
 
   init = (film, allComments, updatedFilmCard) => {
     this.#film = film;
     this.#userDetails = film.userDetails;
     this.#allComments = allComments;
-    this.updatedFilmCard = updatedFilmCard;
+    //this.#updatedFilmCard = updatedFilmCard;
 
     const prevFilmCard = this.#filmCard;
 
@@ -60,11 +61,7 @@ export default class CardsPresenter {
   }
 
   #openFilmDetails = () => {
-    const filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#changeData, this.#changeMode);
-    this.#changeMode();
-    this.#mode = mode.DETAILS;
-    filmDetailsPresenter.init(this.#film, this.#allComments);
-    body.classList.add('hide-overflow');
+    this.#filmDetailsPresenter.init(this.#film, this.#allComments);
   };
 
   #handleFavoriteClick = () => {
@@ -80,15 +77,6 @@ export default class CardsPresenter {
 
   #handleAddToWatchListClick = () => {
     this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist } });
-  };
-
-  resetView = () => {
-    if (this.#mode !== mode.DEFAULT) {
-      /*  const filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#changeData, this.#changeMode);
-      filmDetailsPresenter.init(this.#film, this.#allComments);
-    } */
-      this.#filmDetailsPresenter.init(this.#film, this.#allComments);
-    }
   };
 
   destroy = () => {
@@ -196,5 +184,16 @@ export default class FilmCardsPresenter {
 
     this.#renderSort();
     this.#renderFilmCardContainer();
+  };
+
+
+  #openFilmDetails = () => {
+    this.#changeMode();
+    this.#mode = mode.DETAILS;
+    this.#renderFilmDetailsForm();
+    render(this.#filmDetailsComponent, this.#filmDetailsForm.element);
+    render(this.commentsList, this.#filmDetailsForm.element);
+    body.classList.add('hide-overflow');
+    //document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 } */

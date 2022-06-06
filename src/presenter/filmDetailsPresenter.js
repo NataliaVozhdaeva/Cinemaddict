@@ -16,8 +16,7 @@ export default class FilmDetailsPresenter {
   #commentsList = null;
   #changeData = null;
   #changeMode = null;
-  #mode = null;
-
+  #mode = mode.DEFAULT;
   #film = null;
   #userDetails = null;
   #allComments = [];
@@ -49,6 +48,7 @@ export default class FilmDetailsPresenter {
 
     if (prevFilmDetailsComponent === null) {
       this.#renderPopup();
+      //console.log(this.#mode);
       return;
     }
 
@@ -64,6 +64,10 @@ export default class FilmDetailsPresenter {
   };
 
   #renderPopup = () => {
+    this.#changeMode();
+    this.#mode = mode.DETAILS;
+    console.log(this.#mode);
+
     render(this.#filmDetailsForm, this.#filmDetailsContainer, RenderPosition.BEFOREBEGIN);
 
     this.#renderFilmDitails();
@@ -97,6 +101,7 @@ export default class FilmDetailsPresenter {
 
   #handleFavoriteClick = () => {
     this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite } });
+    console.log(this.#mode);
   };
 
   #handleAlreadyWatchedClick = () => {
@@ -116,6 +121,7 @@ export default class FilmDetailsPresenter {
 
   resetView = () => {
     if (this.#mode !== mode.DEFAULT) {
+      console.log('it work');
       this.#closeFilmDetails();
     }
   };
