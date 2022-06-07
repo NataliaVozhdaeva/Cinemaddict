@@ -71,7 +71,10 @@ export default class BoardFilmsPresenter {
     cardsPresenter.init(film, this.allComments);
     this.#cardsPresenter.set(film.id, cardsPresenter);
 
-    const filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#handlePreferenceChange, this.#handleModeChange);
+    const filmDetailsPresenter = new FilmDetailsPresenter(
+      footer,
+      /* this.#handlePreferenceChange, */ this.#handleModeChange
+    );
     this.#filmDetailsPresenter.set(film.id, filmDetailsPresenter);
   };
 
@@ -103,7 +106,7 @@ export default class BoardFilmsPresenter {
   #handlePreferenceChange = (updatedFilmCard) => {
     this.#films = updateItem(this.#films, updatedFilmCard);
     this.#cardsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
-    //this.#filmDetailsPresenter.get(updatedFilmCard.id);
+    //this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
   };
 
   #handleModeChange = () => {

@@ -48,7 +48,7 @@ export default class FilmDetailsPresenter {
 
     if (prevFilmDetailsComponent === null) {
       this.#renderPopup();
-      //console.log(this.#mode);
+      //console.log(this.#changeData);
       return;
     }
 
@@ -109,6 +109,7 @@ export default class FilmDetailsPresenter {
       ...this.#film,
       userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
     });
+    //replace(this.#filmDetailsComponent, prevFilmDetailsComponent);
   };
 
   #handleAddToWatchListClick = () => {

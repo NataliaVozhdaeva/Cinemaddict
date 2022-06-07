@@ -30,7 +30,7 @@ export default class CardsPresenter {
     // this.#updatedFilmCard = updatedFilmCard;
   }
 
-  init = (film, allComments, updatedFilmCard) => {
+  init = (film, allComments) => {
     this.#film = film;
     this.#userDetails = film.userDetails;
     this.#allComments = allComments;
@@ -61,7 +61,7 @@ export default class CardsPresenter {
   }
 
   #openFilmDetails = () => {
-    this.#filmDetailsPresenter.init(this.#film, this.#allComments);
+    this.#filmDetailsPresenter.init(this.#film, this.#allComments, this.#handlePreferenceChange);
   };
 
   #handleFavoriteClick = () => {
@@ -77,6 +77,12 @@ export default class CardsPresenter {
 
   #handleAddToWatchListClick = () => {
     this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist } });
+  };
+
+  #handlePreferenceChange = (updatedFilmCard) => {
+    this.#film = updateItem(this.#film, updatedFilmCard);
+    //this.#cardsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
+    this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
   };
 
   destroy = () => {
