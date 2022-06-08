@@ -3,7 +3,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 const createFilterItemTemplate = (filter) => {
   const { name, count } = filter;
 
-  const utilityFilterTemplate = (filter) =>
+  const utilityFilterTemplate = () =>
     filter.name === 'All movies'
       ? `<a href="#All" class="main-navigation__item main-navigation__item--active">${name} </a>`
       : `<a href="#${name}" class="main-navigation__item">${name} <span class="main-navigation__item-count">${count}</span></a>`;

@@ -30,13 +30,10 @@ export default class BoardFilmsPresenter {
   constructor(filmSection, filmsModel) {
     this.#filmSection = filmSection;
     this.#filmsModel = filmsModel;
-    this.#filmDetailsPresenter = new FilmDetailsPresenter(
-      footer,
-      /* this.#handlePreferenceChange, */ this.#handleModeChange
-    );
+    this.#filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#handlePreferenceChange);
   }
 
-  init = () => {
+  show = () => {
     this.#films = [...this.#filmsModel.films];
     this.allComments = [...this.#filmsModel.comments];
 
@@ -69,10 +66,9 @@ export default class BoardFilmsPresenter {
     const cardsPresenter = new CardsPresenter(
       this.#filmCardsContainer.element,
       this.#handlePreferenceChange,
-      this.#handleModeChange,
       this.#filmDetailsPresenter
     );
-    cardsPresenter.init(film, this.allComments);
+    cardsPresenter.show(film, this.allComments);
     this.#cardsPresenter.set(film.id, cardsPresenter);
   };
 
@@ -103,26 +99,11 @@ export default class BoardFilmsPresenter {
 
   #handlePreferenceChange = (updatedFilmCard) => {
     this.#films = updateItem(this.#films, updatedFilmCard);
-    this.#cardsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
-    console.log(this.#filmDetailsPresenter);
-    /*  if (this.#filmDetailsPresenter.film) {
-      this.#filmDetailsPresenter.openFilmDetails(updatedFilmCard);
-    } */
-    //this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
+    this.#cardsPresenter.get(updatedFilmCard.id).show(updatedFilmCard, this.allComments);
+    if (this.#filmDetailsPresenter.film !== null) {
+      this.#filmDetailsPresenter.show(updatedFilmCard, this.allComments);
+    }
   };
-
-  #handleModeChange = () => {
-    // this.#cardsPresenter.forEach((presenter) => presenter.resetView());
-  };
-
-  /*   #handleModeChange = () => {
-    this.#filmDetailsPresenter.forEach((presenter) => presenter.resetView());
-  };
-
-  #handlePreferenceChange = (updatedFilmCard) => {
-    this.films = updateItem(this.films, updatedFilmCard);
-    this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard);
-  }; */
 }
 
 /*  #clearFilmsContainer = () => {

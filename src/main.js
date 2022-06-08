@@ -15,4 +15,4 @@ const boardFilmsPresentor = new BoardFilmsPresenter(siteMainElement, filmsModel)
 render(new UserSectionView(), siteHeaderElement);
 //render(new FilterView(filters), siteMainElement);
 
-boardFilmsPresentor.init();
+boardFilmsPresentor.show();
