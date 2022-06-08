@@ -46,6 +46,8 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
     this.#filmDetailsComponent.setAddToWatchListClickHandlerOnFilmDetails(this.#handleAddToWatchListClick);
 
+    console.log(prevFilmDetailsComponent);
+
     if (prevFilmDetailsComponent === null) {
       this.#renderPopup();
       //console.log(this.#changeData);
@@ -66,7 +68,7 @@ export default class FilmDetailsPresenter {
   #renderPopup = () => {
     this.#changeMode();
     this.#mode = mode.DETAILS;
-    console.log(this.#mode);
+    // console.log(this.#mode);
 
     render(this.#filmDetailsForm, this.#filmDetailsContainer, RenderPosition.BEFOREBEGIN);
 

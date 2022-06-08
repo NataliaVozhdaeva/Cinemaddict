@@ -16,13 +16,13 @@ export default class BoardFilmsPresenter {
   #filmsModel = null;
 
   #cardsPresenter = new Map();
-  #filmDetailsPresenter = new Map();
 
   #filmList = new FilmListView();
   #filmCardsContainer = new FilmCardsContainerView();
   #showMoreBtn = new ShowmoreBtn();
   #sortComponent = new SortListView();
   #noFilmsComponent = new NoFilmView();
+  #filmDetailsPresenter = null;
 
   #films = [];
   #renderedFilmCards = FILMCARD_PER_STEP;
@@ -30,6 +30,10 @@ export default class BoardFilmsPresenter {
   constructor(filmSection, filmsModel) {
     this.#filmSection = filmSection;
     this.#filmsModel = filmsModel;
+    this.#filmDetailsPresenter = new FilmDetailsPresenter(
+      footer,
+      /* this.#handlePreferenceChange, */ this.#handleModeChange
+    );
   }
 
   init = () => {
@@ -66,16 +70,10 @@ export default class BoardFilmsPresenter {
       this.#filmCardsContainer.element,
       this.#handlePreferenceChange,
       this.#handleModeChange,
-      this.filmDetailsPresenter
+      this.#filmDetailsPresenter
     );
     cardsPresenter.init(film, this.allComments);
     this.#cardsPresenter.set(film.id, cardsPresenter);
-
-    const filmDetailsPresenter = new FilmDetailsPresenter(
-      footer,
-      /* this.#handlePreferenceChange, */ this.#handleModeChange
-    );
-    this.#filmDetailsPresenter.set(film.id, filmDetailsPresenter);
   };
 
   #renderManyCards = (from, to) => {
@@ -106,12 +104,15 @@ export default class BoardFilmsPresenter {
   #handlePreferenceChange = (updatedFilmCard) => {
     this.#films = updateItem(this.#films, updatedFilmCard);
     this.#cardsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
+    console.log(this.#filmDetailsPresenter);
+    /*  if (this.#filmDetailsPresenter.film) {
+      this.#filmDetailsPresenter.openFilmDetails(updatedFilmCard);
+    } */
     //this.#filmDetailsPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.allComments);
   };
 
   #handleModeChange = () => {
-    //this.#cardsPresenter.forEach((presenter) => presenter.resetView());
-    this.#filmDetailsPresenter.forEach((presenter) => presenter.resetView());
+    // this.#cardsPresenter.forEach((presenter) => presenter.resetView());
   };
 
   /*   #handleModeChange = () => {
