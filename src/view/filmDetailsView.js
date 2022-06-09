@@ -34,8 +34,7 @@ function createFilmDetailsViewTemplate(film) {
   const favoriteClassName = userDetails.favorite ? 'film-details__control-button--active' : '';
 
   return `
-  <section class="film-details">
-  <form class="film-details__inner" action="" method="get">
+  
     <div class="film-details__top-container">
       <div class="film-details__close">
         <button class="film-details__close-btn" type="button">close</button>
@@ -107,9 +106,7 @@ function createFilmDetailsViewTemplate(film) {
           id="favorite" name="favorite">Add to favorites
         </button>
       </section>
-    </div>
-  </form>
-  </section>`;
+    </div>`;
 }
 
 export default class FilmDetailsView extends AbstractView {
@@ -124,6 +121,27 @@ export default class FilmDetailsView extends AbstractView {
     return createFilmDetailsViewTemplate(this.#film);
   }
 
+  setFavoriteClickHandlerOnFilmDetails = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element
+      .querySelector('.film-details__control-button--favorite')
+      .addEventListener('click', this.#favoriteClickHandler);
+  };
+
+  setAlreadyWatchedClickHandlerOnFilmDetails = (callback) => {
+    this._callback.alreadyWatchedClick = callback;
+    this.element
+      .querySelector('.film-details__control-button--watched')
+      .addEventListener('click', this.#alreadyWatchedClickHandler);
+  };
+
+  setAddToWatchListClickHandlerOnFilmDetails = (callback) => {
+    this._callback.addToWatchListClick = callback;
+    this.element
+      .querySelector('.film-details__control-button--watchlist')
+      .addEventListener('click', this.#addToWatchListClickHandler);
+  };
+
   setPopupCloseHandler = (callback) => {
     this._callback.popupClose = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#popupCloseHandler);
@@ -131,6 +149,21 @@ export default class FilmDetailsView extends AbstractView {
 
   #popupCloseHandler = (evt) => {
     evt.preventDefault();
-    this._callback.popupClose();
+    this._callback.popupClose(this.#film);
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  };
+
+  #alreadyWatchedClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.alreadyWatchedClick();
+  };
+
+  #addToWatchListClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.addToWatchListClick();
   };
 }

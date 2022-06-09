@@ -1,16 +1,18 @@
 import { render } from './framework/render.js';
-import NavView from './view/navView';
-import SortListView from './view/sortView.js';
+//import FilterView from './view/filterView';
 import UserSectionView from './view/userView';
-import FilmCardsPresenter from './presenter/filmcardsPresenter.js';
+import BoardFilmsPresenter from './presenter/boardFilmsPresenter.js';
 import FilmsModel from './model/filmsModel.js';
+//import { generateFilter } from './mock/mockForFilter';
 
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
-const filmCardsPresenter = new FilmCardsPresenter();
+
 const filmsModel = new FilmsModel();
+const boardFilmsPresentor = new BoardFilmsPresenter(siteMainElement, filmsModel);
+//const filters = generateFilter(filmsModel.films.userDetails);
 
 render(new UserSectionView(), siteHeaderElement);
-render(new NavView(), siteMainElement);
-render(new SortListView(), siteMainElement);
-filmCardsPresenter.init(siteMainElement, filmsModel);
+//render(new FilterView(filters), siteMainElement);
+
+boardFilmsPresentor.show();

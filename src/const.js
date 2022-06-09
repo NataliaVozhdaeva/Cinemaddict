@@ -1,3 +1,10 @@
 const EMOGI = ['smile', 'sleeping', 'puke', 'angry'];
 
-export { EMOGI };
+const FilterType = {
+  ALL: 'All movies',
+  WATCHLIST: 'Watchlist ',
+  HISTORY: 'History',
+  FAVORITES: 'Favorite',
+};
+
+export { EMOGI, FilterType };
