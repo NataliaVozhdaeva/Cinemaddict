@@ -1,6 +1,7 @@
 import FilmDetailsView from '../view/filmDetailsView';
 import CommentsListView from '../view/commentsListView';
 import FilmDetailsFormView from '../view/filmDetailsFormView';
+import NewCommentView from '../view/newCommentFormView';
 
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 
@@ -15,6 +16,7 @@ export default class FilmDetailsPresenter {
   film = null;
   #userDetails = null;
   #allComments = [];
+  #newComment = null;
   prevFilmDetailsComponent = null;
   prevFilmDetailsForm = null;
   prevCommentsList = null;
@@ -31,11 +33,12 @@ export default class FilmDetailsPresenter {
 
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
     this.prevFilmDetailsForm = this.#filmDetailsForm;
-    this.prevCommentsList = this.commentsList;
+    this.prevCommentsList = this.#commentsList;
 
     this.#filmDetailsComponent = new FilmDetailsView(this.film);
     this.#commentsList = new CommentsListView(this.film, this.#allComments);
     this.#filmDetailsForm = new FilmDetailsFormView();
+    this.#newComment = new NewCommentView();
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
 
@@ -49,8 +52,9 @@ export default class FilmDetailsPresenter {
     }
     if (this.#filmDetailsComponent !== this.prevFilmDetailsComponent.element) {
       this.#filmDetailsForm = this.prevFilmDetailsForm;
-      this.#commentsList = this.prevCommentsList;
       replace(this.#filmDetailsComponent, this.prevFilmDetailsComponent);
+      replace(this.#commentsList, this.prevCommentsList);
+      this.#renderNewCommentForm();
     }
   };
 
@@ -64,11 +68,16 @@ export default class FilmDetailsPresenter {
 
     this.#renderFilmDitails();
     this.#renderComments();
+    this.#renderNewCommentForm();
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #renderComments = () => {
     render(this.#commentsList, this.#filmDetailsForm.element);
+  };
+
+  #renderNewCommentForm = () => {
+    render(this.#newComment, this.#commentsList.element);
   };
 
   #closeFilmDetails = () => {

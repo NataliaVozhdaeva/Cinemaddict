@@ -5,13 +5,13 @@ import FilmCardsContainerView from '../view/filmCardsContainerView';
 import FilmListView from '../view/filmListView';
 import ShowmoreBtn from '../view/showmoreBtnView';
 import NoFilmView from '../view/noFilmsView';
-import CardsPresenter from './cardsPresenter';
+import FilmCardPresenter from './filmCardPresenter';
 import FilmDetailsPresenter from './filmDetailsPresenter.js';
 
 const FILMCARD_PER_STEP = 5;
 const footer = document.querySelector('footer');
 
-export default class BoardFilmsPresenter {
+export default class FilmsBoardPresenter {
   #filmSection = null;
   #filmsModel = null;
 
@@ -63,7 +63,7 @@ export default class BoardFilmsPresenter {
   };
 
   #renderOneFilmCard = (film) => {
-    const cardsPresenter = new CardsPresenter(
+    const cardsPresenter = new FilmCardPresenter(
       this.#filmCardsContainer.element,
       this.#handlePreferenceChange,
       this.#filmDetailsPresenter
