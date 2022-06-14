@@ -11,6 +11,11 @@ const humanizeFilmDuration = (duration) => {
 
 const isFilmChoose = (choose) => Object.values(choose).some(Boolean);
 
+const relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
+
+//const humanizeCommentDate = (commentDate) => dayjs().to(dayjs(commentDate));
+
 const humanizeCommentDate = (commentDate) => dayjs(commentDate).format('YYYY/MM/DD HH:mm');
 
 export { humanizeReliaseDate, humanizeFullReliaseDate, humanizeFilmDuration, isFilmChoose, humanizeCommentDate };
