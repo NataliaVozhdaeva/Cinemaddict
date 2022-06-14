@@ -1,4 +1,4 @@
-/* import { FilterType } from '../const';
+import { FilterType } from '../const';
 
 const filter = {
   [FilterType.ALL]: 14,
@@ -7,7 +7,7 @@ const filter = {
   [FilterType.FAVORITES]: 5,
 };
 
-export { filter }; */
+export { filter };
 
 /*(films) => films.filter((film) =>  !userDetails.watchlist && !userDetails.alreadyWatched && !userDetails.favorite) */
 /* (films) => films.filter((film) => userDetails.watchlist) */
