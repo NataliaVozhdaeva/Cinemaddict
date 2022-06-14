@@ -1,7 +1,7 @@
 import { render, replace, remove } from '../framework/render.js';
 import FilmCardView from '../view/filmCardView';
 
-export default class CardsPresenter {
+export default class FilmCardPresenter {
   #filmCardContainer = null;
   #filmCard = null;
   #film = null;
