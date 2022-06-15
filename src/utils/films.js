@@ -9,8 +9,6 @@ const humanizeFilmDuration = (duration) => {
   return `${hours}h ${minutes}m`;
 };
 
-const isFilmChoose = (choose) => Object.values(choose).some(Boolean);
-
 const humanizeCommentDate = (commentDate) => dayjs(commentDate).format('YYYY/MM/DD HH:mm');
 
-export { humanizeReliaseDate, humanizeFullReliaseDate, humanizeFilmDuration, isFilmChoose, humanizeCommentDate };
+export { humanizeReliaseDate, humanizeFullReliaseDate, humanizeFilmDuration, humanizeCommentDate };

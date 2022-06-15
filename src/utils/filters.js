@@ -1,13 +1,13 @@
-/* import { FilterType } from '../const';
+import { FilterType } from '../const';
 
 const filter = {
   [FilterType.ALL]: 14,
   [FilterType.WATCHLIST]: 3,
   [FilterType.HISTORY]: 9,
-  [FilterType.FAVORITES]: 5,
+  [FilterType.FAVORITES]: 2,
 };
 
-export { filter }; */
+export { filter };
 
 /*(films) => films.filter((film) =>  !userDetails.watchlist && !userDetails.alreadyWatched && !userDetails.favorite) */
 /* (films) => films.filter((film) => userDetails.watchlist) */
