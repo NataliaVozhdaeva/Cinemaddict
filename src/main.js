@@ -11,7 +11,7 @@ const siteMainElement = document.querySelector('.main');
 const filmsModel = new FilmsModel();
 
 const filmsBoardPresenter = new FilmsBoardPresenter(siteMainElement, filmsModel);
-const filters = generateFilter(filmsModel.films.userDetails);
+const filters = generateFilter();
 
 render(new UserSectionView(), siteHeaderElement);
 render(new FilterView(filters), siteMainElement);
