@@ -4,12 +4,11 @@ import { humanizeCommentDate } from '../utils/films';
 function createCommentsListTemplate(film, allComments) {
   const { comments } = film;
   const actualComments = allComments.filter(({ id }) => comments.some((commentId) => commentId === id));
-  const CommentDate = humanizeCommentDate(allComments.date);
 
   const createComments = (arr) =>
     arr
       .map(
-        ({ author, comment, emotion }) => `
+        ({ date, author, comment, emotion }) => `
       <li class="film-details__comment">
          <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -18,7 +17,7 @@ function createCommentsListTemplate(film, allComments) {
               <p class="film-details__comment-text">${comment}</p>
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
-                <span class="film-details__comment-day">${CommentDate}</span>
+                <span class="film-details__comment-day">${humanizeCommentDate(date)}</span>
                 <button class="film-details__comment-delete">Delete</button>
               </p>
             </div>

@@ -7,6 +7,8 @@ import ShowmoreBtn from '../view/showmoreBtnView';
 import NoFilmView from '../view/noFilmsView';
 import FilmCardPresenter from './filmCardPresenter';
 import FilmDetailsPresenter from './filmDetailsPresenter.js';
+import { sortByDate, sortByRating } from '../utils/films';
+import { SortType } from '../const.js';
 
 const FILMCARD_PER_STEP = 5;
 const footer = document.querySelector('footer');
@@ -14,6 +16,8 @@ const footer = document.querySelector('footer');
 export default class FilmsBoardPresenter {
   #filmSection = null;
   #filmsModel = null;
+  #currentSortType = SortType.DEFAULT;
+  #sourcedFilms = [];
 
   #cardsPresenter = new Map();
 
@@ -36,6 +40,7 @@ export default class FilmsBoardPresenter {
   show = () => {
     this.#films = [...this.#filmsModel.films];
     this.allComments = [...this.#filmsModel.comments];
+    this.#sourcedFilms = [...this.#filmsModel.films];
 
     this.#renderFilmList();
   };
@@ -51,6 +56,7 @@ export default class FilmsBoardPresenter {
 
   #renderSort = () => {
     render(this.#sortComponent, this.#filmList.element);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   };
 
   #renderNoFilms = () => {
@@ -99,16 +105,41 @@ export default class FilmsBoardPresenter {
 
   #handlePreferenceChange = (updatedFilmCard) => {
     this.#films = updateItem(this.#films, updatedFilmCard);
+    this.#sourcedFilms = updateItem(this.#sourcedFilms, updatedFilmCard);
     this.#cardsPresenter.get(updatedFilmCard.id).show(updatedFilmCard, this.allComments);
     if (this.#filmDetailsPresenter.film !== null) {
       this.#filmDetailsPresenter.show(updatedFilmCard, this.allComments);
     }
   };
-}
 
-/*  #clearFilmsContainer = () => {
-    this.#filmDetailsPresenter.forEach((presenter) => presenter.destroy());
-    this.#filmDetailsPresenter.clear();
+  #sortFilms = (sortType) => {
+    switch (sortType) {
+      case SortType.BY_DATE:
+        this.#films.sort(sortByDate);
+        break;
+      case SortType.BY_RATING:
+        this.#films.sort(sortByRating);
+        break;
+      default:
+        this.#films = [...this.#sourcedFilms];
+    }
+
+    this.#currentSortType = sortType;
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortFilms(sortType);
+    this.#clearFilmsContainer();
+    this.#renderFilmCardContainer();
+  };
+
+  #clearFilmsContainer = () => {
+    this.#cardsPresenter.forEach((presenter) => presenter.destroy());
+    this.#cardsPresenter.clear();
     this.#renderedFilmCards = FILMCARD_PER_STEP;
     remove(this.#showMoreBtn);
-  }; */
+  };
+}

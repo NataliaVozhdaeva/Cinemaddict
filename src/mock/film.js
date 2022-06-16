@@ -87,20 +87,38 @@ const generateActualComments = () => {
   return actualComments[randomIndex];
 };
 
+const generateRating = () => {
+  const rating = ['0', '1', '2', '3', '4', '5'];
+  const randomIndex = getRandomInteger(0, rating.length - 1);
+  return rating[randomIndex];
+};
+
+const generateReleaseDate = () => {
+  const date = [
+    '2019-05-11T00:00:00.000Z',
+    '2020-05-11T00:00:00.000Z',
+    '2021-05-11T00:00:00.000Z',
+    '2009-05-11T00:00:00.000Z',
+    '2011-05-11T00:00:00.000Z',
+  ];
+  const randomIndex = getRandomInteger(0, date.length - 1);
+  return date[randomIndex];
+};
+
 const generateFilm = () => ({
   id: nanoid(),
   comments: generateActualComments(),
   filmInfo: {
     title: generateTitle(),
     alternativeTitle: 'Laziness Who Sold Themselves',
-    totalRating: 5.3,
+    totalRating: generateRating(),
     poster: generatePoster(),
     ageRating: 0,
     director: 'Tom Ford',
     writers: ['Takeshi Kitano'],
     actors: ['Morgan Freeman, Cергей Безруков'],
     release: {
-      date: '2019-05-11T00:00:00.000Z',
+      date: generateReleaseDate(),
       releaseCountry: 'Finland',
     },
     runtime: 77,
