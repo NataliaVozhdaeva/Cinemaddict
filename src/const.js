@@ -13,4 +13,16 @@ const SortType = {
   BY_RATING: 'by-rating',
 };
 
-export { EMOGI, FilterType, SortType };
+const UserAction = {
+  ADD_COMPONENT: 'ADD_COMMENT',
+  DELETE_COMPONENT: 'DELETE_COMMENT',
+  UPDATE_COMPONENT: 'UPDATE_COMPONENT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export { EMOGI, FilterType, SortType, UserAction, UpdateType };

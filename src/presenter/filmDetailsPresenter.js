@@ -2,7 +2,8 @@ import FilmDetailsView from '../view/filmDetailsView';
 import CommentsListView from '../view/commentsListView';
 import FilmDetailsFormView from '../view/filmDetailsFormView';
 import NewCommentView from '../view/newCommentFormView';
-
+import CommentsModel from '../model/commentsModel.js';
+import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 
 const body = document.querySelector('body');
@@ -15,30 +16,36 @@ export default class FilmDetailsPresenter {
   #changeData = null;
   film = null;
   #userDetails = null;
-  #allComments = [];
   #newComment = null;
   prevFilmDetailsComponent = null;
   prevFilmDetailsForm = null;
   prevCommentsList = null;
+  #commentsModel = null;
 
   constructor(filmDetailsContainer, changeData) {
     this.#filmDetailsContainer = filmDetailsContainer;
     this.#changeData = changeData;
+    this.#commentsModel = new CommentsModel();
+    this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
-  show = (film, allComments) => {
+  get comments() {
+    return this.#commentsModel.comments;
+  }
+
+  show = (film) => {
     this.film = film;
     this.#userDetails = film.userDetails;
-    this.#allComments = allComments;
-
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
     this.prevFilmDetailsForm = this.#filmDetailsForm;
     this.prevCommentsList = this.#commentsList;
 
     this.#filmDetailsComponent = new FilmDetailsView(this.film);
-    this.#commentsList = new CommentsListView(this.film, this.#allComments);
+    this.#commentsList = new CommentsListView(this.film, this.#commentsModel.comments);
     this.#filmDetailsForm = new FilmDetailsFormView();
     this.#newComment = new NewCommentView();
+
+    // console.log(this.#commentsModel);
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
 
@@ -101,18 +108,49 @@ export default class FilmDetailsPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({ ...this.film, userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite } });
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
+      ...this.film,
+      userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite },
+    });
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#changeData({
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
       ...this.film,
       userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
     });
   };
 
   #handleAddToWatchListClick = () => {
-    this.#changeData({ ...this.film, userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist } });
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
+      ...this.film,
+      userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist },
+    });
+  };
+
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    switch (actionType) {
+      case UserAction.ADD_COMPONENT:
+        this.#commentsModel.addComment(updateType, update);
+        break;
+      case UserAction.DELETE_TASK:
+        this.#commentsModel.deleteComment(updateType, update);
+        break;
+    }
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+    switch (updateType) {
+      case UpdateType.MINOR:
+        // - обновить список (например, когда задача ушла в архив)
+
+        break;
+      case UpdateType.MAJOR:
+        // - обновить всю доску (например, при переключении фильтра)
+        break;
+    }
   };
 
   destroy = () => {
