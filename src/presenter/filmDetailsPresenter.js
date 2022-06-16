@@ -41,13 +41,12 @@ export default class FilmDetailsPresenter {
     this.prevCommentsList = this.#commentsList;
 
     this.#filmDetailsComponent = new FilmDetailsView(this.film);
-    this.#commentsList = new CommentsListView(this.film, this.#commentsModel.comments);
+    this.#commentsList = new CommentsListView(this.film, this.#commentsModel.comments, this.#handleViewAction);
     this.#filmDetailsForm = new FilmDetailsFormView();
     this.#newComment = new NewCommentView();
 
-    // console.log(this.#commentsModel);
-
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
+    this.#commentsList.setDeleteClickHandler(this.#handleDeleteClick);
 
     this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
@@ -108,6 +107,7 @@ export default class FilmDetailsPresenter {
   };
 
   #handleFavoriteClick = () => {
+    //console.log(this);
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
       ...this.film,
       userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite },
@@ -129,28 +129,35 @@ export default class FilmDetailsPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
     switch (actionType) {
       case UserAction.ADD_COMPONENT:
         this.#commentsModel.addComment(updateType, update);
         break;
-      case UserAction.DELETE_TASK:
+      case UserAction.DELETE_COMPONENT:
+        console.log(update);
         this.#commentsModel.deleteComment(updateType, update);
         break;
     }
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
     switch (updateType) {
-      case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
+      case UpdateType.PATCH:
+        console.log(data);
+        this.#commentsList.get(data).render(data);
 
         break;
+      case UpdateType.MINOR:
+        break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
         break;
     }
+  };
+
+  #handleDeleteClick = (comment) => {
+    //console.log(this);
+    //console.log(comment);
+    this.#handleViewAction(UserAction.DELETE_COMPONENT, UpdateType.PATCH, comment);
   };
 
   destroy = () => {
