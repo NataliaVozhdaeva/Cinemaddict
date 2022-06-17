@@ -51,7 +51,6 @@ export default class FilmCardPresenter {
   };
 
   #handleFavoriteClick = () => {
-    /* this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite } }); */
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
       ...this.#film,
       userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite },
@@ -59,10 +58,6 @@ export default class FilmCardPresenter {
   };
 
   #handleAlreadyWatchedClick = () => {
-    /*  this.#changeData({
-      ...this.#film,
-      userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
-    }); */
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
       ...this.#film,
       userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
@@ -70,7 +65,6 @@ export default class FilmCardPresenter {
   };
 
   #handleAddToWatchListClick = () => {
-    /* this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist } }); */
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
       ...this.#film,
       userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist },

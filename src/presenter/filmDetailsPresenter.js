@@ -39,10 +39,11 @@ export default class FilmDetailsPresenter {
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
     this.prevFilmDetailsForm = this.#filmDetailsForm;
     this.prevCommentsList = this.#commentsList;
+    //this.prevCommentsModel = this.#commentsModel;
 
-    this.#filmDetailsComponent = new FilmDetailsView(this.film);
-    this.#commentsList = new CommentsListView(this.film, this.#commentsModel.comments, this.#handleViewAction);
     this.#filmDetailsForm = new FilmDetailsFormView();
+    this.#filmDetailsComponent = new FilmDetailsView(this.film);
+    this.#commentsList = new CommentsListView(this.#filterComments);
     this.#newComment = new NewCommentView();
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
@@ -56,9 +57,13 @@ export default class FilmDetailsPresenter {
       this.#renderPopup();
       return;
     }
-    if (this.#filmDetailsComponent !== this.prevFilmDetailsComponent.element) {
+
+    if (this.#filmDetailsComponent !== this.prevFilmDetailsComponentt) {
       this.#filmDetailsForm = this.prevFilmDetailsForm;
       replace(this.#filmDetailsComponent, this.prevFilmDetailsComponent);
+    }
+
+    if (this.#commentsList !== this.prevCommentsList) {
       replace(this.#commentsList, this.prevCommentsList);
       this.#renderNewCommentForm();
     }
@@ -99,6 +104,13 @@ export default class FilmDetailsPresenter {
     this.#closeFilmDetails();
   };
 
+  #filterComments = () => {
+    const allComments = this.comments;
+    const commentForFilm = this.film.comments;
+    const actualComments = allComments.filter(({ id }) => commentForFilm.some((commentId) => commentId === id));
+    return actualComments;
+  };
+
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
@@ -107,7 +119,6 @@ export default class FilmDetailsPresenter {
   };
 
   #handleFavoriteClick = () => {
-    //console.log(this);
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
       ...this.film,
       userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite },
@@ -134,18 +145,15 @@ export default class FilmDetailsPresenter {
         this.#commentsModel.addComment(updateType, update);
         break;
       case UserAction.DELETE_COMPONENT:
-        console.log(update);
         this.#commentsModel.deleteComment(updateType, update);
         break;
     }
   };
 
-  #handleModelEvent = (updateType, data) => {
+  #handleModelEvent = (updateType) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        console.log(data);
-        this.#commentsList.get(data).render(data);
-
+        this.show(this.film);
         break;
       case UpdateType.MINOR:
         break;
@@ -155,8 +163,6 @@ export default class FilmDetailsPresenter {
   };
 
   #handleDeleteClick = (comment) => {
-    //console.log(this);
-    //console.log(comment);
     this.#handleViewAction(UserAction.DELETE_COMPONENT, UpdateType.PATCH, comment);
   };
 

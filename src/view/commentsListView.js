@@ -1,14 +1,11 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeCommentDate } from '../utils/films';
 
-function createCommentsListTemplate(film, allComments) {
-  const { comments } = film;
-  const actualComments = allComments.filter(({ id }) => comments.some((commentId) => commentId === id));
-
+function createCommentsListTemplate(actualComments) {
   const createComments = (arr) =>
     arr
       .map(
-        ({ date, author, comment, emotion }) => `
+        ({ date, author, comment, emotion, id }) => `
       <li class="film-details__comment">
          <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -18,7 +15,7 @@ function createCommentsListTemplate(film, allComments) {
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${humanizeCommentDate(date)}</span>
-                <button class="film-details__comment-delete">Delete</button>
+                <button class="film-details__comment-delete" data-id="${id}">Delete</button>
               </p>
             </div>
           </li>`
@@ -31,7 +28,7 @@ function createCommentsListTemplate(film, allComments) {
   <div class="film-details__bottom-container">
     <section class="film-details__comments-wrap">
       <h3 class="film-details__comments-title">
-        Comments <span class="film-details__comments-count">${comments.length}</span>
+        Comments <span class="film-details__comments-count">${actualComments.length}</span>
       </h3>
       <ul class="film-details__comments-list">
         ${renderComments}
@@ -42,17 +39,17 @@ function createCommentsListTemplate(film, allComments) {
 }
 
 export default class CommentsListView extends AbstractView {
-  #film = null;
-  #comments = null;
+  #filtercomments = null;
+  #actualComments = null;
 
-  constructor(film, comments) {
+  constructor(filtercomments) {
     super();
-    this.#film = film;
-    this.#comments = comments;
+    this.#filtercomments = filtercomments;
+    this.#actualComments = this.#filtercomments();
   }
 
   get template() {
-    return createCommentsListTemplate(this.#film, this.#comments);
+    return createCommentsListTemplate(this.#actualComments);
   }
 
   setDeleteClickHandler = (callback) => {
@@ -64,6 +61,12 @@ export default class CommentsListView extends AbstractView {
 
   #commentDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(this.#comments);
+    const currentId = evt.target.dataset.id;
+    const actualComments = this.#actualComments;
+    const currentComment = actualComments.find((comment) => comment.id === currentId);
+
+    /* console.log(actualComments);
+    console.log(currentComment); */
+    this._callback.deleteClick(currentComment);
   };
 }

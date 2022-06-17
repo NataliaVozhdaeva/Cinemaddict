@@ -52,6 +52,7 @@ export default class FilmsBoardPresenter {
       case SortType.BY_RATING:
         return filteredFilms.sort(sortByRating);
     }
+
     return filteredFilms;
   }
 
@@ -138,6 +139,7 @@ export default class FilmsBoardPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
+    // console.log(data);
     switch (updateType) {
       case UpdateType.PATCH:
         this.#cardsPresenter.get(data.id).show(data);
