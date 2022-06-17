@@ -8,6 +8,7 @@ import FilmCardPresenter from './filmCardPresenter';
 import FilmDetailsPresenter from './filmDetailsPresenter.js';
 import { SortType, UserAction, UpdateType } from '../const.js';
 import { sortByDate, sortByRating } from '../utils/films.js';
+import { filter } from '../utils/filters.js';
 
 const FILMCARD_PER_STEP = 5;
 const footer = document.querySelector('footer');
@@ -15,33 +16,43 @@ const footer = document.querySelector('footer');
 export default class FilmsBoardPresenter {
   #filmSection = null;
   #filmsModel = null;
+  #filterModel = null;
+  #showMoreBtn = null;
+  #filmDetailsPresenter = null;
+  #sortComponent = null;
 
   #cardsPresenter = new Map();
 
   #filmList = new FilmListView();
   #filmCardsContainer = new FilmCardsContainerView();
-  #showMoreBtn = null;
-  #sortComponent = null;
   #noFilmsComponent = new NoFilmView();
-  #filmDetailsPresenter = null;
+
   #renderedFilmCards = FILMCARD_PER_STEP;
   #currentSortType = SortType.DEFAULT;
 
-  constructor(filmSection, filmsModel) {
+  constructor(filmSection, filmsModel, filterModel) {
     this.#filmSection = filmSection;
     this.#filmsModel = filmsModel;
+    this.#filterModel = filterModel;
+
     this.#filmsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
+
     this.#filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#handleViewAction);
   }
 
   get films() {
+    const filterType = this.#filterModel.filter;
+    const films = this.#filmsModel.films;
+    const filteredFilms = filter[filterType](films);
+
     switch (this.#currentSortType) {
       case SortType.BY_DATE:
-        return [...this.#filmsModel.films].sort(sortByDate);
+        return filteredFilms.sort(sortByDate);
       case SortType.BY_RATING:
-        return [...this.#filmsModel.films].sort(sortByRating);
+        return filteredFilms.sort(sortByRating);
     }
-    return this.#filmsModel.films;
+    return filteredFilms;
   }
 
   show = () => {
@@ -115,7 +126,6 @@ export default class FilmsBoardPresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_COMPONENT:
-        //console.log(update);
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.ADD_COMPONENT:
@@ -140,8 +150,8 @@ export default class FilmsBoardPresenter {
         }
         break;
       case UpdateType.MAJOR:
-        this.#clearBoard();
-        this.#renderFilmList({ resetRenderedFilmCards: true, resetSortType: true });
+        this.#clearBoard({ resetRenderedFilmCards: true, resetSortType: true });
+        this.#renderFilmList();
         break;
     }
   };

@@ -59,7 +59,7 @@ export default class CommentsListView extends AbstractView {
     this._callback.deleteClick = callback;
     this.element
       .querySelectorAll('.film-details__comment-delete')
-      .forEach((commentCloseBtn) => commentCloseBtn.addEventListener('click', this.#commentDeleteClickHandler));
+      .forEach((commentDeleteBtn) => commentDeleteBtn.addEventListener('click', this.#commentDeleteClickHandler));
   };
 
   #commentDeleteClickHandler = (evt) => {

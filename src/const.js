@@ -1,7 +1,7 @@
 const EMOGI = ['smile', 'sleeping', 'puke', 'angry'];
 
 const FilterType = {
-  ALL: 'All movies',
+  ALL: 'All',
   WATCHLIST: 'Watchlist ',
   HISTORY: 'History',
   FAVORITES: 'Favorite',
