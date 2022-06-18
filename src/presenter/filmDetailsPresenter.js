@@ -1,8 +1,10 @@
 import FilmDetailsView from '../view/filmDetailsView';
 import CommentsListView from '../view/commentsListView';
+import FilmDetailsSectionView from '../view/filmDetailsSectionView';
 import FilmDetailsFormView from '../view/filmDetailsFormView';
-import NewCommentView from '../view/newCommentFormView';
+//import NewCommentView from '../view/newCommentFormView';
 import CommentsModel from '../model/commentsModel.js';
+import NewCommentPresenter from './new-comment-presenter';
 import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 
@@ -10,22 +12,26 @@ const body = document.querySelector('body');
 
 export default class FilmDetailsPresenter {
   #filmDetailsContainer = null;
+  #filmDetailsSection = null;
   #filmDetailsForm = null;
   #filmDetailsComponent = null;
   #commentsList = null;
   #changeData = null;
-  film = null;
+  #film = null;
   #userDetails = null;
-  #newComment = null;
+  // #newComment = null;
   prevFilmDetailsComponent = null;
+  prevFilmDetailsSection = null;
   prevFilmDetailsForm = null;
   prevCommentsList = null;
   #commentsModel = null;
+  #newCommentPresenter = null;
 
   constructor(filmDetailsContainer, changeData) {
     this.#filmDetailsContainer = filmDetailsContainer;
     this.#changeData = changeData;
     this.#commentsModel = new CommentsModel();
+
     this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
@@ -34,20 +40,23 @@ export default class FilmDetailsPresenter {
   }
 
   show = (film) => {
-    this.film = film;
-    this.#userDetails = film.userDetails;
+    this.#film = film;
+    this.#userDetails = this.#film.userDetails;
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
+    this.prevFilmDetailsSection = this.#filmDetailsSection;
     this.prevFilmDetailsForm = this.#filmDetailsForm;
     this.prevCommentsList = this.#commentsList;
-    //this.prevCommentsModel = this.#commentsModel;
 
+    this.#filmDetailsSection = new FilmDetailsSectionView();
     this.#filmDetailsForm = new FilmDetailsFormView();
-    this.#filmDetailsComponent = new FilmDetailsView(this.film);
+    this.#filmDetailsComponent = new FilmDetailsView(this.#film);
     this.#commentsList = new CommentsListView(this.#filterComments);
-    this.#newComment = new NewCommentView();
+    //this.#newComment = new NewCommentView();
+    this.#newCommentPresenter = new NewCommentPresenter(this.#commentsList.element, this.#handleViewAction);
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
     this.#commentsList.setDeleteClickHandler(this.#handleDeleteClick);
+    //this.#newComment.setFormSubmitHandler(this.#submitKeysHandler);
 
     this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
@@ -59,45 +68,56 @@ export default class FilmDetailsPresenter {
     }
 
     if (this.#filmDetailsComponent !== this.prevFilmDetailsComponentt) {
+      this.#filmDetailsSection = this.prevFilmDetailsSection;
       this.#filmDetailsForm = this.prevFilmDetailsForm;
       replace(this.#filmDetailsComponent, this.prevFilmDetailsComponent);
     }
 
     if (this.#commentsList !== this.prevCommentsList) {
       replace(this.#commentsList, this.prevCommentsList);
-      this.#renderNewCommentForm();
+      //this.renderNewCommentSection();
+      this.createNewComment();
     }
+  };
+
+  #renderPopup = () => {
+    body.classList.add('hide-overflow');
+    render(this.#filmDetailsSection, this.#filmDetailsContainer, RenderPosition.BEFOREBEGIN);
+    render(this.#filmDetailsForm, this.#filmDetailsSection.element);
+
+    this.#renderFilmDitails();
+    this.#renderComments();
+    this.createNewComment();
+    //this.#renderNewCommentSection();
+    //this.addCommentHandler();
+    /*  const handleNewTaskButtonClick = () => {
+      boardPresenter.createTask(handleNewTaskSectionClose);
+      newTaskButtonComponent.element.disabled = true;
+    };
+ */
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    //document.addEventListener('keydown', this.addCommentHandler);
   };
 
   #renderFilmDitails = () => {
     render(this.#filmDetailsComponent, this.#filmDetailsForm.element);
   };
 
-  #renderPopup = () => {
-    body.classList.add('hide-overflow');
-    render(this.#filmDetailsForm, this.#filmDetailsContainer, RenderPosition.BEFOREBEGIN);
-
-    this.#renderFilmDitails();
-    this.#renderComments();
-    this.#renderNewCommentForm();
-    document.addEventListener('keydown', this.#escKeyDownHandler);
-  };
-
   #renderComments = () => {
     render(this.#commentsList, this.#filmDetailsForm.element);
   };
 
-  #renderNewCommentForm = () => {
-    render(this.#newComment, this.#commentsList.element);
+  createNewComment = (callback) => {
+    this.#newCommentPresenter.show(callback);
   };
 
   #closeFilmDetails = () => {
     body.classList.remove('hide-overflow');
-    remove(this.#filmDetailsForm);
+    remove(this.#filmDetailsSection);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.prevFilmDetailsComponent = null;
     this.#filmDetailsComponent = null;
-    this.film = null;
+    this.#film = null;
   };
 
   #closePopupHandler = () => {
@@ -106,7 +126,7 @@ export default class FilmDetailsPresenter {
 
   #filterComments = () => {
     const allComments = this.comments;
-    const commentForFilm = this.film.comments;
+    const commentForFilm = this.#film.comments;
     const actualComments = allComments.filter(({ id }) => commentForFilm.some((commentId) => commentId === id));
     return actualComments;
   };
@@ -120,21 +140,21 @@ export default class FilmDetailsPresenter {
 
   #handleFavoriteClick = () => {
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
-      ...this.film,
+      ...this.#film,
       userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite },
     });
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
-      ...this.film,
+      ...this.#film,
       userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
     });
   };
 
   #handleAddToWatchListClick = () => {
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
-      ...this.film,
+      ...this.#film,
       userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist },
     });
   };
@@ -150,12 +170,18 @@ export default class FilmDetailsPresenter {
     }
   };
 
-  #handleModelEvent = (updateType) => {
+  #handleModelEvent = (updateType, update, filmsComments) => {
+    filmsComments = this.#film.comments;
+
     switch (updateType) {
       case UpdateType.PATCH:
-        this.show(this.film);
+        this.show(this.#film);
+        this.createNewComment();
         break;
       case UpdateType.MINOR:
+        filmsComments.push(update.id);
+        this.show(this.#film);
+        this.createNewComment();
         break;
       case UpdateType.MAJOR:
         break;
@@ -166,7 +192,14 @@ export default class FilmDetailsPresenter {
     this.#handleViewAction(UserAction.DELETE_COMPONENT, UpdateType.PATCH, comment);
   };
 
+  #handleFormSubmit = (comment) => {
+    console.log('presentor submit');
+    this.#changeData(UserAction.ADD_COMPONENT, UpdateType.MINOR, { id: nanoid(), ...comment });
+    this.destroy();
+    this.show();
+  };
+
   destroy = () => {
-    remove(this.#filmDetailsForm);
+    remove(this.#filmDetailsSection);
   };
 }

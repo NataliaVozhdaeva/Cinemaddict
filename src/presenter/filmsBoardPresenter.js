@@ -6,7 +6,7 @@ import ShowmoreBtnView from '../view/showmoreBtnView';
 import NoFilmView from '../view/noFilmsView';
 import FilmCardPresenter from './filmCardPresenter';
 import FilmDetailsPresenter from './filmDetailsPresenter.js';
-import { SortType, UserAction, UpdateType } from '../const.js';
+import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
 import { sortByDate, sortByRating } from '../utils/films.js';
 import { filter } from '../utils/filters.js';
 
@@ -20,15 +20,16 @@ export default class FilmsBoardPresenter {
   #showMoreBtn = null;
   #filmDetailsPresenter = null;
   #sortComponent = null;
+  #noFilmsComponent = null;
 
   #cardsPresenter = new Map();
 
   #filmList = new FilmListView();
   #filmCardsContainer = new FilmCardsContainerView();
-  #noFilmsComponent = new NoFilmView();
 
   #renderedFilmCards = FILMCARD_PER_STEP;
   #currentSortType = SortType.DEFAULT;
+  #filterType = FilterType.ALL;
 
   constructor(filmSection, filmsModel, filterModel) {
     this.#filmSection = filmSection;
@@ -42,9 +43,9 @@ export default class FilmsBoardPresenter {
   }
 
   get films() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const films = this.#filmsModel.films;
-    const filteredFilms = filter[filterType](films);
+    const filteredFilms = filter[this.#filterType](films);
 
     switch (this.#currentSortType) {
       case SortType.BY_DATE:
@@ -81,6 +82,7 @@ export default class FilmsBoardPresenter {
   };
 
   #renderNoFilms = () => {
+    this.#noFilmsComponent = new NoFilmView(this.#filterType);
     render(this.#noFilmsComponent, this.#filmSection);
   };
 
@@ -139,7 +141,6 @@ export default class FilmsBoardPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
-    // console.log(data);
     switch (updateType) {
       case UpdateType.PATCH:
         this.#cardsPresenter.get(data.id).show(data);
@@ -175,8 +176,11 @@ export default class FilmsBoardPresenter {
     this.#cardsPresenter.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noFilmsComponent);
     remove(this.#showMoreBtn);
+
+    if (this.#noFilmsComponent) {
+      remove(this.#noFilmsComponent);
+    }
 
     if (resetRenderedFilmCards) {
       this.#renderedFilmCards = FILMCARD_PER_STEP;

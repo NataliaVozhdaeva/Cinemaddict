@@ -52,6 +52,7 @@ export default class NewCommentView extends AbstractStatefulView {
     super();
     this._state = NewCommentView.parseCommentToState(newComment);
     this.#setInnerHandlers();
+    this.#submitKeysHandler(this.#formSubmitHandler);
   }
 
   #setInnerHandlers = () => {
@@ -76,23 +77,38 @@ export default class NewCommentView extends AbstractStatefulView {
     });
   };
 
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    document.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  };
+
+  #submitKeysHandler = (func) => {
+    document.addEventListener('keydown', function (event) {
+      if (event.code == 'Enter' && (event.ctrlKey || event.metaKey)) {
+        func();
+      }
+    });
+  };
+
+  #formSubmitHandler = () => {
+    this._callback.formSubmit(NewCommentView.parseStateToComment(this._state));
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  };
+
   static parseCommentToState = (newComment) => ({
     ...newComment,
   });
 
   static parseStateToComment = (state) => {
     const newComment = { ...state };
-
     return newComment;
   };
 
-  _restoreHandlers = () => {
-    this.#setInnerHandlers();
-  };
-
   get template() {
-    //console.log(this._state);
-
     return createNewCommentFormTemplate(this._state);
   }
 }
