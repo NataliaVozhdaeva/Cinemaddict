@@ -75,7 +75,6 @@ export default class FilmDetailsPresenter {
 
     if (this.#commentsList !== this.prevCommentsList) {
       replace(this.#commentsList, this.prevCommentsList);
-      //this.renderNewCommentSection();
       this.createNewComment();
     }
   };
@@ -180,8 +179,8 @@ export default class FilmDetailsPresenter {
         break;
       case UpdateType.MINOR:
         filmsComments.push(update.id);
+        console.log(filmsComments);
         this.show(this.#film);
-        this.createNewComment();
         break;
       case UpdateType.MAJOR:
         break;
@@ -190,13 +189,6 @@ export default class FilmDetailsPresenter {
 
   #handleDeleteClick = (comment) => {
     this.#handleViewAction(UserAction.DELETE_COMPONENT, UpdateType.PATCH, comment);
-  };
-
-  #handleFormSubmit = (comment) => {
-    console.log('presentor submit');
-    this.#changeData(UserAction.ADD_COMPONENT, UpdateType.MINOR, { id: nanoid(), ...comment });
-    this.destroy();
-    this.show();
   };
 
   destroy = () => {

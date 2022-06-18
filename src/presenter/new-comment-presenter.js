@@ -1,6 +1,7 @@
 import { remove, render } from '../framework/render.js';
 import { UserAction, UpdateType } from '../const.js';
 import NewCommentView from '../view/newCommentFormView.js';
+import { nanoid } from 'nanoid';
 
 export default class NewCommentPresenter {
   #commentContainer = null;
@@ -30,15 +31,14 @@ export default class NewCommentPresenter {
     if (this.#newComment === null) {
       return;
     }
-
     this.#destroyCallback?.();
-
     remove(this.#newComment);
+    //this.#newComment.reset({});
     this.#newComment = null;
   };
 
   #handleFormSubmit = (comment) => {
-    this.#changeData(UserAction.ADD_COMPONENT, UpdateType.MINOR, { ...comment, id: '5' });
+    this.#changeData(UserAction.ADD_COMPONENT, UpdateType.MINOR, { ...comment, id: nanoid() });
     this.destroy();
   };
 }

@@ -1,5 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { EMOGI } from '../const.js';
+import he from 'he';
 
 const BLANK_COMMENT = {
   id: null,
@@ -27,6 +28,7 @@ function createNewCommentFormTemplate(newComment) {
     ).join('');
 
   const emogiList = createEmogiList(EMOGI);
+  const textComment = newComment.comment;
 
   const addNewEmogi =
     newComment.emotion !== null
@@ -37,7 +39,8 @@ function createNewCommentFormTemplate(newComment) {
     <div class="film-details__new-comment">
     <div class="film-details__add-emoji-label">${addNewEmogi}</div>
       <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newComment.comment}</textarea>
+        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" 
+        name="comment">${he.encode(textComment)}</textarea>
       </label>
       <div class="film-details__emoji-list">
         ${emogiList}
@@ -99,12 +102,17 @@ export default class NewCommentView extends AbstractStatefulView {
     this.setFormSubmitHandler(this._callback.formSubmit);
   };
 
+  reset = (newComment) => {
+    this.updateElement(NewCommentView.parsCommentToState(newComment));
+  };
+
   static parseCommentToState = (newComment) => ({
     ...newComment,
   });
 
   static parseStateToComment = (state) => {
     const newComment = { ...state };
+    this._setState = {};
     return newComment;
   };
 

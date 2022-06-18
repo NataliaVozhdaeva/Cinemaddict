@@ -21,6 +21,7 @@ export default class FilmsBoardPresenter {
   #filmDetailsPresenter = null;
   #sortComponent = null;
   #noFilmsComponent = null;
+  #newComment = null;
 
   #cardsPresenter = new Map();
 
@@ -149,6 +150,7 @@ export default class FilmsBoardPresenter {
         this.#clearBoard();
         this.#renderFilmList();
         if (this.#filmDetailsPresenter.film !== null) {
+          this.#newComment.reset({});
           this.#filmDetailsPresenter.show(data);
         }
         break;
