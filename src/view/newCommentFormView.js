@@ -86,8 +86,8 @@ export default class NewCommentView extends AbstractStatefulView {
   };
 
   #submitKeysHandler = (func) => {
-    document.addEventListener('keydown', function (event) {
-      if (event.code == 'Enter' && (event.ctrlKey || event.metaKey)) {
+    document.addEventListener('keydown', (event) => {
+      if (event.code === 'Enter' && (event.ctrlKey || event.metaKey)) {
         func();
       }
     });

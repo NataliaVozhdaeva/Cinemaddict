@@ -179,7 +179,6 @@ export default class FilmDetailsPresenter {
         break;
       case UpdateType.MINOR:
         filmsComments.push(update.id);
-        console.log(filmsComments);
         this.show(this.#film);
         break;
       case UpdateType.MAJOR:

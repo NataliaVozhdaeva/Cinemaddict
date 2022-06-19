@@ -12,7 +12,7 @@ export default class FilmsModel extends Observable {
     const index = this.#films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
-      throw new Error("Can't update unexisting film");
+      throw new Error('Can\'t update unexisting film');
     }
 
     this.#films = [...this.#films.slice(0, index), update, ...this.#films.slice(index + 1)];
@@ -28,7 +28,7 @@ export default class FilmsModel extends Observable {
     const index = this.#films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
-      throw new Error("Can't delete unexisting film");
+      throw new Error('Can\'t delete unexisting film');
     }
 
     this.#films = [...this.#films.slice(0, index), ...this.#films.slice(index + 1)];
