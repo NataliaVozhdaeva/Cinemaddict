@@ -1,6 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { EMOGI } from '../const.js';
-import he from 'he';
 
 const BLANK_COMMENT = {
   id: null,
@@ -40,7 +39,7 @@ function createNewCommentFormTemplate(newComment) {
     <div class="film-details__add-emoji-label">${addNewEmogi}</div>
       <label class="film-details__comment-label">
         <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" 
-        name="comment">${he.encode(textComment)}</textarea>
+        name="comment">${textComment}</textarea>
       </label>
       <div class="film-details__emoji-list">
         ${emogiList}
