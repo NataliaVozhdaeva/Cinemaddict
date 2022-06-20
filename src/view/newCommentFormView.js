@@ -49,11 +49,14 @@ function createNewCommentFormTemplate(newComment) {
 
 export default class NewCommentView extends AbstractStatefulView {
   emotions = [];
+  #removeListener = null;
 
-  constructor(newComment = BLANK_COMMENT) {
+  constructor(allComments, newComment = BLANK_COMMENT) {
     super();
     this._state = NewCommentView.parseCommentToState(newComment);
     this.#setInnerHandlers();
+    this.allComments = allComments;
+    //console.log('view ', this.allComments);
   }
 
   #setInnerHandlers = () => {
@@ -62,7 +65,34 @@ export default class NewCommentView extends AbstractStatefulView {
       .forEach((emogi) => emogi.addEventListener('click', this.#emogiToggleHandler));
 
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextHandler);
-    document.addEventListener('keydown', this.#submitKeysHandler, { once: true });
+
+    const pressKeyHandler = () => {
+      const listener = (evt) => {
+        if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
+          this.#saveData();
+        }
+      };
+
+      document.addEventListener('keydown', listener);
+
+      return () => document.removeEventListener('keydown', listener);
+    };
+
+    if (this.#removeListener) {
+      this.#removeListener();
+    }
+
+    this.#removeListener = pressKeyHandler(this.newComment);
+  };
+
+  /* setAddNewCommentHandler = (callback) => {
+    this._callback.addNewComment = callback;
+  }; */
+
+  #saveData = () => {
+    const readyNewComment = NewCommentView.parseStateToComment(this._state);
+    this.allComments.push(readyNewComment);
+    console.log(this.allComments);
   };
 
   #emogiToggleHandler = (evt) => {
@@ -79,25 +109,8 @@ export default class NewCommentView extends AbstractStatefulView {
     });
   };
 
-  setFormSubmitHandler = (callback) => {
-    this._callback.formSubmit = callback;
-  };
-
-  #submitKeysHandler = () => {
-    document.addEventListener('keydown', (event) => {
-      if (event.code === 'Enter' && (event.ctrlKey || event.metaKey)) {
-        this.#formSubmitHandler();
-      }
-    });
-  };
-
-  #formSubmitHandler = () => {
-    this._callback.formSubmit(NewCommentView.parseStateToComment(this._state));
-  };
-
   _restoreHandlers = () => {
     this.#setInnerHandlers();
-    this.setFormSubmitHandler(this._callback.formSubmit);
   };
 
   reset = (newComment) => {
@@ -116,5 +129,10 @@ export default class NewCommentView extends AbstractStatefulView {
 
   get template() {
     return createNewCommentFormTemplate(this._state);
+  }
+
+  remove() {
+    this.#removeListener();
+    this.#removeListener = null;
   }
 }

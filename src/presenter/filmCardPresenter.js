@@ -48,7 +48,6 @@ export default class FilmCardPresenter {
 
   #openFilmDetails = () => {
     this.#filmDetailsPresenter.show(this.#film, this.#allComments, this.#changeData);
-    console.log(this.#filmDetailsPresenter);
   };
 
   #handleFavoriteClick = () => {

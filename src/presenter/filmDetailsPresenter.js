@@ -30,7 +30,7 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsContainer = filmDetailsContainer;
     this.#changeData = changeData;
     this.#commentsModel = new CommentsModel();
-    this.#newComment = new NewCommentView();
+    //this.#newComment = new NewCommentView();
     this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
@@ -50,10 +50,11 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsForm = new FilmDetailsFormView();
     this.#filmDetailsComponent = new FilmDetailsView(this.#film);
     this.#commentsList = new CommentsListView(this.#filterComments);
+    this.#newComment = new NewCommentView(this.comments);
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
     this.#commentsList.setDeleteClickHandler(this.#handleDeleteClick);
-    this.#newComment.setFormSubmitHandler(this.#handleFormSubmit);
+    //  this.#newComment.setAddNewCommentHandler(this.#handleAddNewComment);
 
     this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
@@ -74,6 +75,10 @@ export default class FilmDetailsPresenter {
       replace(this.#commentsList, this.prevCommentsList);
       this.#renderNewCommentSection();
     }
+
+    if (this.#newComment) {
+      this.#newComment.removeElement();
+    }
   };
 
   #renderPopup = () => {
@@ -89,6 +94,7 @@ export default class FilmDetailsPresenter {
       newTaskButtonComponent.element.disabled = true;
     };
  */
+
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
@@ -171,10 +177,10 @@ export default class FilmDetailsPresenter {
         this.show(this.#film);
         break;
       case UpdateType.MINOR:
-        document.removeEventListener('keydown', this.#handleFormSubmit);
         console.log('handleModelEvent');
         filmsComments.push(update.id);
         this.show(this.#film);
+        //document.removeEventListener('keydown', this.#handleAddNewComment);
         break;
       case UpdateType.MAJOR:
         break;
@@ -185,8 +191,8 @@ export default class FilmDetailsPresenter {
     this.#handleViewAction(UserAction.DELETE_COMPONENT, UpdateType.PATCH, comment);
   };
 
-  #handleFormSubmit = (comment) => {
-    console.log('handleFormSubmit');
+  #handleAddNewComment = (comment) => {
+    console.log('handleAddNewComment');
     this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.MINOR, { ...comment, id: nanoid() });
   };
 
