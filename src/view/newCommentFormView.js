@@ -54,7 +54,6 @@ export default class NewCommentView extends AbstractStatefulView {
     super();
     this._state = NewCommentView.parseCommentToState(newComment);
     this.#setInnerHandlers();
-    this.#submitKeysHandler(this.#formSubmitHandler);
   }
 
   #setInnerHandlers = () => {
@@ -63,6 +62,7 @@ export default class NewCommentView extends AbstractStatefulView {
       .forEach((emogi) => emogi.addEventListener('click', this.#emogiToggleHandler));
 
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextHandler);
+    document.addEventListener('keydown', this.#submitKeysHandler, { once: true });
   };
 
   #emogiToggleHandler = (evt) => {
@@ -81,13 +81,12 @@ export default class NewCommentView extends AbstractStatefulView {
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
-    document.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
-  #submitKeysHandler = (func) => {
+  #submitKeysHandler = () => {
     document.addEventListener('keydown', (event) => {
       if (event.code === 'Enter' && (event.ctrlKey || event.metaKey)) {
-        func();
+        this.#formSubmitHandler();
       }
     });
   };

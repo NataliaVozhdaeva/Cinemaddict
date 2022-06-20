@@ -131,13 +131,14 @@ export default class FilmsBoardPresenter {
     switch (actionType) {
       case UserAction.UPDATE_COMPONENT:
         this.#filmsModel.updateFilm(updateType, update);
+        console.log('11');
         break;
-      case UserAction.ADD_COMPONENT:
+      /*   case UserAction.ADD_COMPONENT:
         this.#filmsModel.addFilm(updateType, update);
         break;
       case UserAction.DELETE_COMPONENT:
         this.#filmsModel.deleteFilm(updateType, update);
-        break;
+        break; */
     }
   };
 
@@ -149,8 +150,9 @@ export default class FilmsBoardPresenter {
       case UpdateType.MINOR:
         this.#clearBoard();
         this.#renderFilmList();
-        if (this.#filmDetailsPresenter.film !== null) {
-          this.#newComment.reset({});
+        console.log(this.#filmDetailsPresenter);
+        if (this.#filmDetailsPresenter.mode !== 'defolt') {
+          //this.#newComment.reset({});
           this.#filmDetailsPresenter.show(data);
         }
         break;
