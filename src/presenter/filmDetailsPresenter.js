@@ -6,7 +6,12 @@ import NewCommentView from '../view/newCommentFormView';
 import CommentsModel from '../model/commentsModel.js';
 import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
-import { nanoid } from 'nanoid';
+//import { nanoid } from 'nanoid';
+
+import FilmsApiService from '../films-api-service.js';
+
+const AUTHORIZATION = 'Basic nepeivinaGertruda';
+const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
 const body = document.querySelector('body');
 
@@ -29,12 +34,12 @@ export default class FilmDetailsPresenter {
   constructor(filmDetailsContainer, changeData) {
     this.#filmDetailsContainer = filmDetailsContainer;
     this.#changeData = changeData;
-    this.#commentsModel = new CommentsModel();
-    //this.#newComment = new NewCommentView();
+    this.#commentsModel = new CommentsModel(new FilmsApiService(END_POINT, AUTHORIZATION));
     this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
   get comments() {
+    // console.log(this.#commentsModel);
     return this.#commentsModel.comments;
   }
 
@@ -49,17 +54,18 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsSection = new FilmDetailsSectionView();
     this.#filmDetailsForm = new FilmDetailsFormView();
     this.#filmDetailsComponent = new FilmDetailsView(this.#film);
-    this.#commentsList = new CommentsListView(this.#filterComments);
+    this.#commentsList = new CommentsListView(this.comments);
     this.#newComment = new NewCommentView(this.comments);
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
     this.#commentsList.setDeleteClickHandler(this.#handleDeleteClick);
-    //  this.#newComment.setAddNewCommentHandler(this.#handleAddNewComment);
+    this.#newComment.setAddNewCommentHandler(this.#handleAddNewComment);
 
     this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
     this.#filmDetailsComponent.setAddToWatchListClickHandlerOnFilmDetails(this.#handleAddToWatchListClick);
 
+    this.#commentsModel.init(this.#film);
     if (this.prevFilmDetailsComponent === null) {
       this.#renderPopup();
       return;
@@ -89,12 +95,6 @@ export default class FilmDetailsPresenter {
     this.#renderComments();
     this.#renderNewCommentSection();
 
-    /*  const handleNewTaskButtonClick = () => {
-      boardPresenter.createTask(handleNewTaskSectionClose);
-      newTaskButtonComponent.element.disabled = true;
-    };
- */
-
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
@@ -114,20 +114,13 @@ export default class FilmDetailsPresenter {
     body.classList.remove('hide-overflow');
     remove(this.#filmDetailsSection);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    this.prevFilmDetailsComponent = null;
+    //this.prevFilmDetailsComponent = null;
     this.#filmDetailsComponent = null;
     this.#film = null;
   };
 
   #closePopupHandler = () => {
     this.#closeFilmDetails();
-  };
-
-  #filterComments = () => {
-    const allComments = this.comments;
-    const commentForFilm = this.#film.comments;
-    const actualComments = allComments.filter(({ id }) => commentForFilm.some((commentId) => commentId === id));
-    return actualComments;
   };
 
   #escKeyDownHandler = (evt) => {
@@ -161,7 +154,7 @@ export default class FilmDetailsPresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.ADD_COMPONENT:
-        this.#commentsModel.addComment(updateType, update);
+        this.#commentsModel.addComment(updateType, update, this.#film);
         break;
       case UserAction.DELETE_COMPONENT:
         this.#commentsModel.deleteComment(updateType, update);
@@ -182,7 +175,10 @@ export default class FilmDetailsPresenter {
         this.show(this.#film);
         //document.removeEventListener('keydown', this.#handleAddNewComment);
         break;
-      case UpdateType.MAJOR:
+      case UpdateType.INIT:
+        /* this.#isLoading = false;
+        remove(this.#loadingComponent); */
+        this.#renderComments();
         break;
     }
   };
@@ -193,7 +189,7 @@ export default class FilmDetailsPresenter {
 
   #handleAddNewComment = (comment) => {
     console.log('handleAddNewComment');
-    this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.MINOR, { ...comment, id: nanoid() });
+    this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.MINOR, comment);
   };
 
   destroy = () => {
@@ -203,3 +199,19 @@ export default class FilmDetailsPresenter {
     remove(this.#filmDetailsSection);
   };
 }
+
+/*  #filterComments = () => {
+    const allComments = this.comments;
+    const commentForFilm = this.#film.comments;
+    const actualComments = allComments.filter(({ id }) => commentForFilm.some((commentId) => commentId === id));
+    return actualComments;
+  };
+
+ 
+  const handleNewTaskButtonClick = () => {
+    boardPresenter.createTask(handleNewTaskSectionClose);
+    newTaskButtonComponent.element.disabled = true;
+  };
+   get comments (){ const comments = async (film) => { await this.#commentsModel.init(film).then(() => this.#commentsModel.comments);
+    return comments()
+  */

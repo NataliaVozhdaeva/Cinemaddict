@@ -85,14 +85,16 @@ export default class NewCommentView extends AbstractStatefulView {
     this.#removeListener = pressKeyHandler(this.newComment);
   };
 
-  /* setAddNewCommentHandler = (callback) => {
+  setAddNewCommentHandler = (callback) => {
     this._callback.addNewComment = callback;
-  }; */
+  };
 
   #saveData = () => {
-    const readyNewComment = NewCommentView.parseStateToComment(this._state);
-    this.allComments.push(readyNewComment);
-    console.log(this.allComments);
+    this._callback.addNewComment(NewCommentView.parseStateToComment(this._state));
+
+    /*  const readyNewComment =  NewCommentView.parseStateToComment(this._state); */
+    //this.allComments.push(readyNewComment);
+    //console.log(this.allComments);
   };
 
   #emogiToggleHandler = (evt) => {

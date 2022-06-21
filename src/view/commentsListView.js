@@ -1,8 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeCommentDate } from '../utils/films';
-import he from 'he';
 
-function createCommentsListTemplate(actualComments) {
+function createCommentsListTemplate(comments) {
   const createComments = (arr) =>
     arr
       .map(
@@ -12,7 +11,7 @@ function createCommentsListTemplate(actualComments) {
               <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
             </span> 
             <div>
-              <p class="film-details__comment-text">${he.encode(comment)}</p>
+              <p class="film-details__comment-text">${comment}</p>
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${humanizeCommentDate(date)}</span>
@@ -23,13 +22,13 @@ function createCommentsListTemplate(actualComments) {
       )
       .join('');
 
-  const renderComments = createComments(actualComments);
+  const renderComments = createComments(comments);
 
   return `
   <div class="film-details__bottom-container">
     <section class="film-details__comments-wrap">
       <h3 class="film-details__comments-title">
-        Comments <span class="film-details__comments-count">${actualComments.length}</span>
+        Comments <span class="film-details__comments-count">${comments.length}</span>
       </h3>
       <ul class="film-details__comments-list">
         ${renderComments}
@@ -40,17 +39,17 @@ function createCommentsListTemplate(actualComments) {
 }
 
 export default class CommentsListView extends AbstractView {
-  #filtercomments = null;
-  #actualComments = null;
+  //#filtercomments = null;
+  #comments = null;
 
-  constructor(filtercomments) {
+  constructor(comments) {
     super();
-    this.#filtercomments = filtercomments;
-    this.#actualComments = this.#filtercomments();
+    //this.#filtercomments = filtercomments;
+    this.#comments = comments;
   }
 
   get template() {
-    return createCommentsListTemplate(this.#actualComments);
+    return createCommentsListTemplate(this.#comments);
   }
 
   setDeleteClickHandler = (callback) => {
@@ -63,11 +62,8 @@ export default class CommentsListView extends AbstractView {
   #commentDeleteClickHandler = (evt) => {
     evt.preventDefault();
     const currentId = evt.target.dataset.id;
-    const actualComments = this.#actualComments;
-    const currentComment = actualComments.find((comment) => comment.id === currentId);
+    const currentComment = this.#comments.find((comment) => comment.id === currentId);
 
-    /* console.log(actualComments);
-    console.log(currentComment); */
     this._callback.deleteClick(currentComment);
   };
 }
