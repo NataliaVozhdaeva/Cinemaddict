@@ -22,7 +22,7 @@ export default class FilmDetailsPresenter {
   #filmDetailsComponent = null;
   #commentsList = null;
   #changeData = null;
-  #film = null;
+  film = null;
   #userDetails = null;
   #newComment = null;
   prevFilmDetailsComponent = null;
@@ -44,8 +44,8 @@ export default class FilmDetailsPresenter {
   }
 
   show = (film) => {
-    this.#film = film;
-    this.#userDetails = this.#film.userDetails;
+    this.film = film;
+    this.#userDetails = this.film.userDetails;
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
     this.prevFilmDetailsSection = this.#filmDetailsSection;
     this.prevFilmDetailsForm = this.#filmDetailsForm;
@@ -53,7 +53,7 @@ export default class FilmDetailsPresenter {
 
     this.#filmDetailsSection = new FilmDetailsSectionView();
     this.#filmDetailsForm = new FilmDetailsFormView();
-    this.#filmDetailsComponent = new FilmDetailsView(this.#film);
+    this.#filmDetailsComponent = new FilmDetailsView(this.film);
     this.#commentsList = new CommentsListView(this.comments);
     this.#newComment = new NewCommentView(this.comments);
 
@@ -65,7 +65,8 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
     this.#filmDetailsComponent.setAddToWatchListClickHandlerOnFilmDetails(this.#handleAddToWatchListClick);
 
-    this.#commentsModel.init(this.#film);
+    this.#commentsModel.init(this.film);
+
     if (this.prevFilmDetailsComponent === null) {
       this.#renderPopup();
       return;
@@ -102,6 +103,8 @@ export default class FilmDetailsPresenter {
     render(this.#filmDetailsComponent, this.#filmDetailsForm.element);
   };
 
+  #initmodel = () => {};
+
   #renderComments = () => {
     render(this.#commentsList, this.#filmDetailsForm.element);
   };
@@ -116,7 +119,7 @@ export default class FilmDetailsPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     //this.prevFilmDetailsComponent = null;
     this.#filmDetailsComponent = null;
-    this.#film = null;
+    this.film = null;
   };
 
   #closePopupHandler = () => {
@@ -132,21 +135,21 @@ export default class FilmDetailsPresenter {
 
   #handleFavoriteClick = () => {
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
-      ...this.#film,
+      ...this.film,
       userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite },
     });
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
-      ...this.#film,
+      ...this.film,
       userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
     });
   };
 
   #handleAddToWatchListClick = () => {
     this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
-      ...this.#film,
+      ...this.film,
       userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist },
     });
   };
@@ -154,7 +157,7 @@ export default class FilmDetailsPresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.ADD_COMPONENT:
-        this.#commentsModel.addComment(updateType, update, this.#film);
+        this.#commentsModel.addComment(updateType, update, this.film);
         break;
       case UserAction.DELETE_COMPONENT:
         this.#commentsModel.deleteComment(updateType, update);
@@ -163,16 +166,16 @@ export default class FilmDetailsPresenter {
   };
 
   #handleModelEvent = (updateType, update, filmsComments) => {
-    filmsComments = this.#film.comments;
+    filmsComments = this.film.comments;
 
     switch (updateType) {
       case UpdateType.PATCH:
-        this.show(this.#film);
+        this.show(this.film);
         break;
       case UpdateType.MINOR:
         console.log('handleModelEvent');
         filmsComments.push(update.id);
-        this.show(this.#film);
+        this.show(this.film);
         //document.removeEventListener('keydown', this.#handleAddNewComment);
         break;
       case UpdateType.INIT:

@@ -22,6 +22,7 @@ export default class FilmsBoardPresenter {
   #filmDetailsPresenter = null;
   #sortComponent = null;
   #noFilmsComponent = null;
+
   //#newComment = null;
   #loadingComponent = new LoadingView();
 
@@ -162,12 +163,11 @@ export default class FilmsBoardPresenter {
       case UpdateType.MINOR:
         this.#clearBoard();
         this.#renderFilmList();
-        //console.log(this.#filmDetailsPresenter);
-        /* if (this.#filmDetailsPresenter.prevFilmDetailsComponent !== null) {
+        if (this.#filmDetailsPresenter.film !== null) {
           //this.#newComment.reset({});
           this.#filmDetailsPresenter.show(data);
           console.log(this.#filmDetailsPresenter.mode);
-        } */
+        }
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({ resetRenderedFilmCards: true, resetSortType: true });
