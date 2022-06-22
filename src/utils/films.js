@@ -9,7 +9,11 @@ const humanizeFilmDuration = (duration) => {
   return `${hours}h ${minutes}m`;
 };
 
-const humanizeCommentDate = (commentDate) => dayjs(commentDate).format('YYYY/MM/DD HH:mm');
+//const humanizeCommentDate = (commentDate) => dayjs(commentDate).format('YYYY/MM/DD HH:mm');
+const relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
+
+const humanizeCommentDate = (commentDate) => dayjs().to(dayjs(commentDate));
 
 const getWeightForNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {

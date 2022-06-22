@@ -7,9 +7,11 @@ const BLANK_COMMENT = {
   comment: '',
   date: '2022-05-11T16:12:32.554Z',
   emotion: null,
+  isDisabled: true,
+  isSaving: true,
 };
 
-function createNewCommentFormTemplate(newComment) {
+function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
   const createEmogiList = () =>
     EMOGI.map(
       (emogi) => `
@@ -20,13 +22,15 @@ function createNewCommentFormTemplate(newComment) {
       id="emoji-${emogi}" 
       value="${emogi}"
       ${emogi === newComment.emotion ? 'checked' : ''}
+     
       >
-    <label class="film-details__emoji-label" for="emoji-${emogi}">
+    <label  ${isDisabled ? 'disabled' : ''}class="film-details__emoji-label" for="emoji-${emogi}">
       <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
     </label>`
     ).join('');
 
   const emogiList = createEmogiList(EMOGI);
+  const textComment = newComment.comment;
 
   const addNewEmogi =
     newComment.emotion !== null
@@ -37,7 +41,8 @@ function createNewCommentFormTemplate(newComment) {
     <div class="film-details__new-comment">
     <div class="film-details__add-emoji-label">${addNewEmogi}</div>
       <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newComment.comment}</textarea>
+        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" 
+        name="comment" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'loading...' : textComment}</textarea>
       </label>
       <div class="film-details__emoji-list">
         ${emogiList}
@@ -47,6 +52,7 @@ function createNewCommentFormTemplate(newComment) {
 
 export default class NewCommentView extends AbstractStatefulView {
   emotions = [];
+  #removeListener = null;
 
   constructor(newComment = BLANK_COMMENT) {
     super();
@@ -60,6 +66,33 @@ export default class NewCommentView extends AbstractStatefulView {
       .forEach((emogi) => emogi.addEventListener('click', this.#emogiToggleHandler));
 
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextHandler);
+
+    const pressKeyHandler = () => {
+      const listener = (evt) => {
+        if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
+          this.#saveData();
+          document.removeEventListener('keydown', listener);
+        }
+      };
+
+      document.addEventListener('keydown', listener);
+
+      return () => document.removeEventListener('keydown', listener);
+    };
+
+    /* if (this.#removeListener) {
+      this.#removeListener();
+    } */
+
+    /* this.#removeListener = */ pressKeyHandler(this.newComment);
+  };
+
+  setAddNewCommentHandler = (callback) => {
+    this._callback.addNewComment = callback;
+  };
+
+  #saveData = () => {
+    this._callback.addNewComment(NewCommentView.parseStateToComment(this._state));
   };
 
   #emogiToggleHandler = (evt) => {
@@ -67,6 +100,7 @@ export default class NewCommentView extends AbstractStatefulView {
     this.updateElement({
       emotion: evt.target.value,
     });
+    //this.removeListeners();
   };
 
   #newCommentTextHandler = (evt) => {
@@ -76,23 +110,44 @@ export default class NewCommentView extends AbstractStatefulView {
     });
   };
 
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    // this.removeListeners();
+  };
+
+  /*  reset = (newComment) => {
+    this.updateElement(NewCommentView.parsCommentToState(newComment));
+  }; */
+
+  removeListeners = () => {
+    this.element
+      .querySelectorAll('.film-details__emoji-item')
+      .forEach((emogi) => emogi.removeEventListener('click', this.#emogiToggleHandler));
+    this.element
+      .querySelector('.film-details__comment-input')
+      .removeEventListener('input', this.#newCommentTextHandler);
+  };
+
   static parseCommentToState = (newComment) => ({
     ...newComment,
+    isDisabled: false,
+    isSaving: false,
   });
 
   static parseStateToComment = (state) => {
     const newComment = { ...state };
-
+    delete newComment.isDisabled;
+    delete newComment.isSaving;
+    this._setState = {};
     return newComment;
   };
 
-  _restoreHandlers = () => {
-    this.#setInnerHandlers();
-  };
-
   get template() {
-    //console.log(this._state);
-
     return createNewCommentFormTemplate(this._state);
+  }
+
+  remove() {
+    this.#removeListener();
+    this.#removeListener = null;
   }
 }

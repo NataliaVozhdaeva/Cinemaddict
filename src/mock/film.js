@@ -82,7 +82,10 @@ const generateId = () => {
 };
 
 const generateActualComments = () => {
-  const actualComments = [['0'], ['1', '2'], ['3']];
+  const actualComments = [
+    ['0', '3'],
+    ['1', '2'],
+  ];
   const randomIndex = getRandomInteger(0, actualComments.length - 1);
   return actualComments[randomIndex];
 };

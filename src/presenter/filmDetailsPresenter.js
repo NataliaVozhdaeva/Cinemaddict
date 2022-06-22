@@ -1,46 +1,69 @@
 import FilmDetailsView from '../view/filmDetailsView';
 import CommentsListView from '../view/commentsListView';
+import FilmDetailsSectionView from '../view/filmDetailsSectionView';
 import FilmDetailsFormView from '../view/filmDetailsFormView';
 import NewCommentView from '../view/newCommentFormView';
-
+import CommentsModel from '../model/commentsModel.js';
+import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
+import LoadingView from '../view/loading-view.js';
+//import { nanoid } from 'nanoid';
+
+import FilmsApiService from '../films-api-service.js';
+
+const AUTHORIZATION = 'Basic nepeivinaGertruda';
+const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
 const body = document.querySelector('body');
 
 export default class FilmDetailsPresenter {
   #filmDetailsContainer = null;
+  #filmDetailsSection = null;
   #filmDetailsForm = null;
   #filmDetailsComponent = null;
   #commentsList = null;
   #changeData = null;
   film = null;
   #userDetails = null;
-  #allComments = [];
   #newComment = null;
   prevFilmDetailsComponent = null;
+  prevFilmDetailsSection = null;
   prevFilmDetailsForm = null;
   prevCommentsList = null;
+  #commentsModel = null;
+  #loadingComponent = new LoadingView();
+  #isLoading = true;
 
   constructor(filmDetailsContainer, changeData) {
     this.#filmDetailsContainer = filmDetailsContainer;
     this.#changeData = changeData;
+    this.#commentsModel = new CommentsModel(new FilmsApiService(END_POINT, AUTHORIZATION));
+    this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
-  show = (film, allComments) => {
-    this.film = film;
-    this.#userDetails = film.userDetails;
-    this.#allComments = allComments;
+  get comments() {
+    // console.log(this.#commentsModel);
+    return this.#commentsModel.comments;
+  }
 
+  show = async (film) => {
+    this.film = film;
+    const comments = await this.#commentsModel.init(this.film.id).then(() => this.#commentsModel.comments);
+    this.#userDetails = this.film.userDetails;
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
+    this.prevFilmDetailsSection = this.#filmDetailsSection;
     this.prevFilmDetailsForm = this.#filmDetailsForm;
     this.prevCommentsList = this.#commentsList;
 
-    this.#filmDetailsComponent = new FilmDetailsView(this.film);
-    this.#commentsList = new CommentsListView(this.film, this.#allComments);
+    this.#filmDetailsSection = new FilmDetailsSectionView();
     this.#filmDetailsForm = new FilmDetailsFormView();
+    this.#filmDetailsComponent = new FilmDetailsView(this.film);
+    this.#commentsList = new CommentsListView(this.comments);
     this.#newComment = new NewCommentView();
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
+    this.#commentsList.setDeleteClickHandler(this.#handleDeleteClick);
+    this.#newComment.setAddNewCommentHandler(this.#handleAddNewComment);
 
     this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
@@ -50,41 +73,56 @@ export default class FilmDetailsPresenter {
       this.#renderPopup();
       return;
     }
-    if (this.#filmDetailsComponent !== this.prevFilmDetailsComponent.element) {
+
+    if (this.#filmDetailsComponent !== this.prevFilmDetailsComponentt) {
+      this.#filmDetailsSection = this.prevFilmDetailsSection;
       this.#filmDetailsForm = this.prevFilmDetailsForm;
       replace(this.#filmDetailsComponent, this.prevFilmDetailsComponent);
-      replace(this.#commentsList, this.prevCommentsList);
-      this.#renderNewCommentForm();
     }
+
+    if (this.#commentsList !== this.prevCommentsList) {
+      replace(this.#commentsList, this.prevCommentsList);
+      this.#renderNewCommentSection();
+    }
+
+    if (this.#newComment) {
+      this.#newComment.removeElement();
+    }
+  };
+
+  #renderPopup = () => {
+    body.classList.add('hide-overflow');
+    render(this.#filmDetailsSection, this.#filmDetailsContainer, RenderPosition.BEFOREBEGIN);
+    render(this.#filmDetailsForm, this.#filmDetailsSection.element);
+    this.#renderFilmDitails();
+
+    this.#renderComments();
+    this.#renderNewCommentSection();
+
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #renderFilmDitails = () => {
     render(this.#filmDetailsComponent, this.#filmDetailsForm.element);
   };
 
-  #renderPopup = () => {
-    body.classList.add('hide-overflow');
-    render(this.#filmDetailsForm, this.#filmDetailsContainer, RenderPosition.BEFOREBEGIN);
-
-    this.#renderFilmDitails();
-    this.#renderComments();
-    this.#renderNewCommentForm();
-    document.addEventListener('keydown', this.#escKeyDownHandler);
-  };
-
   #renderComments = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
     render(this.#commentsList, this.#filmDetailsForm.element);
   };
 
-  #renderNewCommentForm = () => {
+  #renderNewCommentSection = () => {
     render(this.#newComment, this.#commentsList.element);
   };
 
   #closeFilmDetails = () => {
     body.classList.remove('hide-overflow');
-    remove(this.#filmDetailsForm);
+    remove(this.#filmDetailsSection);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    this.prevFilmDetailsComponent = null;
+    //this.prevFilmDetailsComponent = null;
     this.#filmDetailsComponent = null;
     this.film = null;
   };
@@ -101,21 +139,123 @@ export default class FilmDetailsPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({ ...this.film, userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite } });
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
+      ...this.film,
+      userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite },
+    });
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#changeData({
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
       ...this.film,
       userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
     });
   };
 
   #handleAddToWatchListClick = () => {
-    this.#changeData({ ...this.film, userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist } });
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
+      ...this.film,
+      userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist },
+    });
+  };
+
+  #handleViewAction = async (actionType, updateType, update) => {
+    switch (actionType) {
+      /*   case UserAction.UPDATE_COMPONENT:
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch (err) {
+          this.#filmDetailsComponent.setAborting();
+        }
+
+        break; */
+      case UserAction.ADD_COMPONENT:
+        this.setSaving();
+        try {
+          await this.#commentsModel.addComment(updateType, update, this.film);
+        } catch (err) {
+          this.setFilmDetailsFormAborting();
+        }
+        break;
+      case UserAction.DELETE_COMPONENT:
+        this.setDeleting();
+        try {
+          await this.#commentsModel.deleteComment(updateType, update);
+        } catch (err) {
+          this.setDeleteCommentAborting();
+        }
+
+        break;
+    }
+  };
+
+  #handleModelEvent = (updateType) => {
+    switch (updateType) {
+      /* case UpdateType.PATCH:
+        this.show(this.film);
+         this.#renderComments(); 
+        break; */
+      case UpdateType.MINOR:
+        /* this.#renderComments(); */
+        this.show(this.film);
+        /* console.log(update);
+        filmsComments.push(update.id);
+        this.show(this.film); */
+        //document.removeEventListener('keydown', this.#handleAddNewComment);
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        /* this.#renderPopup(); */
+        break;
+    }
+  };
+
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#commentsList.element);
+  };
+
+  #handleDeleteClick = (comment) => {
+    this.#handleViewAction(UserAction.DELETE_COMPONENT, UpdateType.MINOR, comment);
+  };
+
+  #handleAddNewComment = (comment) => {
+    // console.log('handleAddNewComment');
+    this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.MINOR, comment);
   };
 
   destroy = () => {
-    remove(this.#filmDetailsForm);
+    if (this.#newComment === null) {
+      return;
+    }
+    remove(this.#filmDetailsSection);
+  };
+
+  setSaving = () => {
+    this.#newComment.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setDeleting = () => {
+    this.#commentsList.updateElement({
+      isDeleting: true,
+    });
+  };
+
+  setFilmDetailsFormAborting = () => {
+    const resetState = () => {
+      this.#newComment.updateElement({
+        isDisabled: false,
+        isSaving: false,
+      });
+    };
+
+    this.#filmDetailsForm.shake(resetState);
+  };
+
+  setDeleteCommentAborting = () => {
+    this.#commentsList.shake();
   };
 }

@@ -1,5 +1,15 @@
 import { render, replace, remove } from '../framework/render.js';
 import FilmCardView from '../view/filmCardView';
+import { UserAction, UpdateType } from '../const.js';
+//import FilmDetailsPresenter from './filmDetailsPresenter.js';
+/* import CommentsModel from '../model/commentsModel';
+
+import FilmsApiService from '../films-api-service.js';
+
+const AUTHORIZATION = 'Basic nepeivinaGertruda';
+const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict'; */
+
+//const footer = document.querySelector('footer');
 
 export default class FilmCardPresenter {
   #filmCardContainer = null;
@@ -7,21 +17,30 @@ export default class FilmCardPresenter {
   #film = null;
   #userDetails = null;
   #changeData = null;
-
-  #allComments = [];
   #filmDetailsPresenter = null;
+  // #filmsModel = null;
+  // #commentsModel = null;
 
   constructor(filmCardContainer, changeData, filmDetailsPresenter) {
     this.#filmCardContainer = filmCardContainer;
+    //this.#filmsModel = filmsModel;
     this.#changeData = changeData;
     this.#filmDetailsPresenter = filmDetailsPresenter;
+    //new FilmDetailsPresenter(footer, this.#handleViewAction);
+    //this.#commentsModel = new CommentsModel(new FilmsApiService(END_POINT, AUTHORIZATION));
+    //this.#commentsModel.addObserver(this.#handleModelEvent);
+
+    //this.#filmDetailsPresenter = filmDetailsPresenter;
   }
 
-  show = (film, allComments) => {
+  /*   get comments() {
+    console.log(this.#commentsModel);
+    return this.#commentsModel.comments;
+  } */
+
+  show = (film) => {
     this.#film = film;
     this.#userDetails = film.userDetails;
-    this.#allComments = allComments;
-
     const prevFilmCard = this.#filmCard;
 
     this.#filmCard = new FilmCardView(film);
@@ -46,25 +65,35 @@ export default class FilmCardPresenter {
   }
 
   #openFilmDetails = () => {
-    this.#filmDetailsPresenter.show(this.#film, this.#allComments, this.#changeData);
+    this.#filmDetailsPresenter.show(this.#film);
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite } });
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
+      ...this.#film,
+      userDetails: { ...this.#userDetails, favorite: !this.#userDetails.favorite },
+    });
   };
 
   #handleAlreadyWatchedClick = () => {
-    this.#changeData({
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
       ...this.#film,
       userDetails: { ...this.#userDetails, alreadyWatched: !this.#userDetails.alreadyWatched },
     });
   };
 
   #handleAddToWatchListClick = () => {
-    this.#changeData({ ...this.#film, userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist } });
+    this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.MINOR, {
+      ...this.#film,
+      userDetails: { ...this.#userDetails, watchlist: !this.#userDetails.watchlist },
+    });
   };
 
   destroy = () => {
     remove(this.#filmCard);
+  };
+
+  setAborting = () => {
+    this.#filmCard.shake();
   };
 }

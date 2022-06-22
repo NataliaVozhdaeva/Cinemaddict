@@ -1,14 +1,13 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { humanizeCommentDate } from '../utils/films';
 
-function createCommentsListTemplate(film, allComments) {
-  const { comments } = film;
-  const actualComments = allComments.filter(({ id }) => comments.some((commentId) => commentId === id));
+const isDeleting = false;
 
+function createCommentsListTemplate(comments, isDeleting) {
   const createComments = (arr) =>
     arr
       .map(
-        ({ date, author, comment, emotion }) => `
+        ({ date, author, comment, emotion, id }) => `
       <li class="film-details__comment">
          <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -18,14 +17,16 @@ function createCommentsListTemplate(film, allComments) {
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${humanizeCommentDate(date)}</span>
-                <button class="film-details__comment-delete">Delete</button>
+                <button class="film-details__comment-delete" data-id="${id}" >${
+          isDeleting ? 'Deleting...' : 'Delete'
+        }</button>
               </p>
             </div>
           </li>`
       )
       .join('');
 
-  const renderComments = createComments(actualComments);
+  const renderComments = createComments(comments);
 
   return `
   <div class="film-details__bottom-container">
@@ -41,17 +42,38 @@ function createCommentsListTemplate(film, allComments) {
 `;
 }
 
-export default class CommentsListView extends AbstractView {
-  #film = null;
+export default class CommentsListView extends AbstractStatefulView {
   #comments = null;
 
-  constructor(film, comments) {
+  constructor(comments) {
     super();
-    this.#film = film;
     this.#comments = comments;
   }
 
   get template() {
-    return createCommentsListTemplate(this.#film, this.#comments);
+    return createCommentsListTemplate(this.#comments, isDeleting);
   }
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element
+      .querySelectorAll('.film-details__comment-delete')
+      .forEach((commentDeleteBtn) => commentDeleteBtn.addEventListener('click', this.#commentDeleteClickHandler));
+  };
+
+  #commentDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    const currentId = evt.target.dataset.id;
+    const currentComment = this.#comments.find((comment) => comment.id === currentId);
+    this._setState({
+      /**/
+    });
+    this._callback.deleteClick(currentComment);
+  };
+
+  _restoreHandlers = () => {
+    this.element
+      .querySelectorAll('.film-details__comment-delete')
+      .forEach((commentDeleteBtn) => commentDeleteBtn.addEventListener('click', this.#commentDeleteClickHandler));
+  };
 }
