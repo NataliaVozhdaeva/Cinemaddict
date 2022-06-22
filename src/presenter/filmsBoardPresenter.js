@@ -17,13 +17,12 @@ const footer = document.querySelector('footer');
 export default class FilmsBoardPresenter {
   #filmSection = null;
   #filmsModel = null;
-  #filterModel = null;
   #showMoreBtn = null;
   #filmDetailsPresenter = null;
   #sortComponent = null;
   #noFilmsComponent = null;
+  #filterModel = null;
 
-  //#newComment = null;
   #loadingComponent = new LoadingView();
 
   #cardsPresenter = new Map();

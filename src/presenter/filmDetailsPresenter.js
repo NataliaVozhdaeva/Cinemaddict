@@ -6,6 +6,7 @@ import NewCommentView from '../view/newCommentFormView';
 import CommentsModel from '../model/commentsModel.js';
 import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
+import LoadingView from '../view/loading-view.js';
 //import { nanoid } from 'nanoid';
 
 import FilmsApiService from '../films-api-service.js';
@@ -30,6 +31,8 @@ export default class FilmDetailsPresenter {
   prevFilmDetailsForm = null;
   prevCommentsList = null;
   #commentsModel = null;
+  #loadingComponent = new LoadingView();
+  #isLoading = true;
 
   constructor(filmDetailsContainer, changeData) {
     this.#filmDetailsContainer = filmDetailsContainer;
@@ -43,8 +46,9 @@ export default class FilmDetailsPresenter {
     return this.#commentsModel.comments;
   }
 
-  show = (film) => {
+  show = async (film) => {
     this.film = film;
+    const comments = await this.#commentsModel.init(this.film.id).then(() => this.#commentsModel.comments);
     this.#userDetails = this.film.userDetails;
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
     this.prevFilmDetailsSection = this.#filmDetailsSection;
@@ -64,8 +68,6 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsComponent.setFavoriteClickHandlerOnFilmDetails(this.#handleFavoriteClick);
     this.#filmDetailsComponent.setAlreadyWatchedClickHandlerOnFilmDetails(this.#handleAlreadyWatchedClick);
     this.#filmDetailsComponent.setAddToWatchListClickHandlerOnFilmDetails(this.#handleAddToWatchListClick);
-
-    this.#commentsModel.init(this.film);
 
     if (this.prevFilmDetailsComponent === null) {
       this.#renderPopup();
@@ -93,6 +95,7 @@ export default class FilmDetailsPresenter {
     render(this.#filmDetailsSection, this.#filmDetailsContainer, RenderPosition.BEFOREBEGIN);
     render(this.#filmDetailsForm, this.#filmDetailsSection.element);
     this.#renderFilmDitails();
+
     this.#renderComments();
     this.#renderNewCommentSection();
 
@@ -103,10 +106,13 @@ export default class FilmDetailsPresenter {
     render(this.#filmDetailsComponent, this.#filmDetailsForm.element);
   };
 
-  #initmodel = () => {};
-
   #renderComments = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
     render(this.#commentsList, this.#filmDetailsForm.element);
+    console.log(this.comments);
   };
 
   #renderNewCommentSection = () => {
@@ -171,19 +177,26 @@ export default class FilmDetailsPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.show(this.film);
+        /* this.#renderComments(); */
         break;
       case UpdateType.MINOR:
-        console.log('handleModelEvent');
-        filmsComments.push(update.id);
+        /* this.#renderComments(); */
         this.show(this.film);
+        /* console.log(update);
+        filmsComments.push(update.id);
+        this.show(this.film); */
         //document.removeEventListener('keydown', this.#handleAddNewComment);
         break;
       case UpdateType.INIT:
-        /* this.#isLoading = false;
-        remove(this.#loadingComponent); */
-        this.#renderComments();
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        /* this.#renderPopup(); */
         break;
     }
+  };
+
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#commentsList.element);
   };
 
   #handleDeleteClick = (comment) => {
@@ -191,8 +204,8 @@ export default class FilmDetailsPresenter {
   };
 
   #handleAddNewComment = (comment) => {
-    console.log('handleAddNewComment');
-    this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.MINOR, comment);
+    // console.log('handleAddNewComment');
+    this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.PATCH, comment);
   };
 
   destroy = () => {

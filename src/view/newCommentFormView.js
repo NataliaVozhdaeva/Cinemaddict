@@ -70,6 +70,7 @@ export default class NewCommentView extends AbstractStatefulView {
       const listener = (evt) => {
         if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
           this.#saveData();
+          document.removeEventListener('keydown', listener);
         }
       };
 
@@ -78,11 +79,11 @@ export default class NewCommentView extends AbstractStatefulView {
       return () => document.removeEventListener('keydown', listener);
     };
 
-    if (this.#removeListener) {
+    /* if (this.#removeListener) {
       this.#removeListener();
-    }
+    } */
 
-    this.#removeListener = pressKeyHandler(this.newComment);
+    /* this.#removeListener = */ pressKeyHandler(this.newComment);
   };
 
   setAddNewCommentHandler = (callback) => {
@@ -102,6 +103,7 @@ export default class NewCommentView extends AbstractStatefulView {
     this.updateElement({
       emotion: evt.target.value,
     });
+    //this.#removeListener();
   };
 
   #newCommentTextHandler = (evt) => {
@@ -113,11 +115,21 @@ export default class NewCommentView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
+    // this.removeListeners();
   };
 
   reset = (newComment) => {
     this.updateElement(NewCommentView.parsCommentToState(newComment));
   };
+
+  /* removeListeners = () => {
+    this.element
+      .querySelectorAll('.film-details__emoji-item')
+      .forEach((emogi) => emogi.removeEventListener('click', this.#emogiToggleHandler));
+    this.element
+      .querySelector('.film-details__comment-input')
+      .removeEventListener('input', this.#newCommentTextHandler);
+  }; */
 
   static parseCommentToState = (newComment) => ({
     ...newComment,
