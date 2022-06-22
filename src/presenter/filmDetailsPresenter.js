@@ -122,7 +122,6 @@ export default class FilmDetailsPresenter {
     body.classList.remove('hide-overflow');
     remove(this.#filmDetailsSection);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    //this.prevFilmDetailsComponent = null;
     this.#filmDetailsComponent = null;
     this.film = null;
   };
@@ -161,14 +160,6 @@ export default class FilmDetailsPresenter {
 
   #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
-      /*   case UserAction.UPDATE_COMPONENT:
-        try {
-          await this.#filmsModel.updateFilm(updateType, update);
-        } catch (err) {
-          this.#filmDetailsComponent.setAborting();
-        }
-
-        break; */
       case UserAction.ADD_COMPONENT:
         this.setSaving();
         try {
@@ -178,7 +169,7 @@ export default class FilmDetailsPresenter {
         }
         break;
       case UserAction.DELETE_COMPONENT:
-        this.setDeleting();
+        this.setDeleting(update);
         try {
           await this.#commentsModel.deleteComment(updateType, update);
         } catch (err) {
@@ -191,22 +182,12 @@ export default class FilmDetailsPresenter {
 
   #handleModelEvent = (updateType) => {
     switch (updateType) {
-      /* case UpdateType.PATCH:
-        this.show(this.film);
-         this.#renderComments(); 
-        break; */
       case UpdateType.MINOR:
-        /* this.#renderComments(); */
         this.show(this.film);
-        /* console.log(update);
-        filmsComments.push(update.id);
-        this.show(this.film); */
-        //document.removeEventListener('keydown', this.#handleAddNewComment);
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
-        /* this.#renderPopup(); */
         break;
     }
   };
@@ -220,7 +201,6 @@ export default class FilmDetailsPresenter {
   };
 
   #handleAddNewComment = (comment) => {
-    // console.log('handleAddNewComment');
     this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.MINOR, comment);
   };
 
@@ -238,10 +218,8 @@ export default class FilmDetailsPresenter {
     });
   };
 
-  setDeleting = () => {
-    this.#commentsList.updateElement({
-      isDeleting: true,
-    });
+  setDeleting = (currentComment) => {
+    this.#commentsList.updateElement(currentComment);
   };
 
   setFilmDetailsFormAborting = () => {
@@ -256,6 +234,11 @@ export default class FilmDetailsPresenter {
   };
 
   setDeleteCommentAborting = () => {
-    this.#commentsList.shake();
+    const resetState = () => {
+      this.#commentsList.updateElement({
+        isDeleting,
+      });
+    };
+    this.#commentsList.shake(resetState);
   };
 }

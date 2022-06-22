@@ -9,7 +9,6 @@ const humanizeFilmDuration = (duration) => {
   return `${hours}h ${minutes}m`;
 };
 
-//const humanizeCommentDate = (commentDate) => dayjs(commentDate).format('YYYY/MM/DD HH:mm');
 const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 

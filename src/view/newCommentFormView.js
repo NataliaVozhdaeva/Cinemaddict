@@ -79,12 +79,7 @@ export default class NewCommentView extends AbstractStatefulView {
 
       return () => document.removeEventListener('keydown', listener);
     };
-
-    /* if (this.#removeListener) {
-      this.#removeListener();
-    } */
-
-    /* this.#removeListener = */ pressKeyHandler(this.newComment);
+    pressKeyHandler(this.newComment);
   };
 
   setAddNewCommentHandler = (callback) => {
@@ -100,7 +95,6 @@ export default class NewCommentView extends AbstractStatefulView {
     this.updateElement({
       emotion: evt.target.value,
     });
-    //this.removeListeners();
   };
 
   #newCommentTextHandler = (evt) => {
@@ -112,12 +106,7 @@ export default class NewCommentView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
-    // this.removeListeners();
   };
-
-  /*  reset = (newComment) => {
-    this.updateElement(NewCommentView.parsCommentToState(newComment));
-  }; */
 
   removeListeners = () => {
     this.element

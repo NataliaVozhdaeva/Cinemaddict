@@ -14,7 +14,6 @@ export default class CommentsModel extends Observable {
     try {
       const comments = await this.#filmsApiService.getComments(film);
       this.#comments = comments;
-      // console.log('model ', this.#comments);
     } catch (err) {
       this.#comments = [];
     }
@@ -52,48 +51,4 @@ export default class CommentsModel extends Observable {
       throw new Error("Can't delete comment");
     }
   };
-
-  /* #adaptToClient = (film) => {
-    const release = {
-      ...film.film_info.release,
-      releaseCountry: film.film_info.release['release_country'],
-    };
-
-    const filmInfo = {
-      ...film.film_info,
-      alternativeTitle: film.film_info['alternative_title'],
-      totalRating: film.film_info['total_rating'],
-      ageRating: film.film_info['age_rating'],
-      release: release,
-    };
-
-    const userDetails = {
-      ...film.user_details,
-      alreadyWatched: film.user_details['already_watched'],
-      watchingDate:
-        film.user_details['watching_date'] !== null
-          ? new Date(film.user_details['watching_date'])
-          : film.user_details['watching_date'],
-    };
-
-    const adaptedFilm = {
-      ...film,
-      filmInfo,
-      userDetails,
-    };
-
-    delete adaptedFilm['film_info'];
-    delete adaptedFilm['user_details'];
-
-    delete filmInfo['alternative_title'];
-    delete filmInfo['total_rating'];
-    delete filmInfo['age_rating'];
-
-    delete release['release_country'];
-
-    delete userDetails['already_watched'];
-    delete userDetails['watching_date'];
-
-    return adaptedFilm;
-  }; */
 }

@@ -23,7 +23,7 @@ const createFilmTemplate = (film) => {
 
   const description = createShotDescription(filmInfo.description);
   const genres = filmInfo.genre.join(', ');
-  //console.log(id);
+
   return `<article class='film-card'>
           <a class='film-card__link'>
             <h3 class='film-card__title'>${filmInfo.title}</h3>

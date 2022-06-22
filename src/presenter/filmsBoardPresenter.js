@@ -10,10 +10,14 @@ import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
 import { sortByDate, sortByRating } from '../utils/films.js';
 import { filter } from '../utils/filters.js';
 import LoadingView from '../view/loading-view.js';
-import ControlBtnsView from '../view/controlBtnsView.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 const FILMCARD_PER_STEP = 5;
 const footer = document.querySelector('footer');
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class FilmsBoardPresenter {
   #filmSection = null;
@@ -23,7 +27,6 @@ export default class FilmsBoardPresenter {
   #sortComponent = null;
   #noFilmsComponent = null;
   #filterModel = null;
-  #controlBtns = new ControlBtnsView();
   #loadingComponent = new LoadingView();
 
   #cardsPresenter = new Map();
@@ -35,6 +38,7 @@ export default class FilmsBoardPresenter {
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor(filmSection, filmsModel, filterModel) {
     this.#filmSection = filmSection;
@@ -45,7 +49,6 @@ export default class FilmsBoardPresenter {
     this.#filterModel.addObserver(this.#handleModelEvent);
 
     this.#filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#handleViewAction);
-    //this.#controlBtns = new ControlBtnsView();
   }
 
   get films() {
@@ -107,7 +110,6 @@ export default class FilmsBoardPresenter {
       this.#filmCardsContainer.element,
       this.#handleViewAction,
       this.#filmDetailsPresenter
-      /*  this.#controlBtns */
     );
     cardsPresenter.show(film, this.allComments);
     this.#cardsPresenter.set(film.id, cardsPresenter);
@@ -143,6 +145,7 @@ export default class FilmsBoardPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     switch (actionType) {
       case UserAction.UPDATE_COMPONENT:
         try {
@@ -159,6 +162,7 @@ export default class FilmsBoardPresenter {
         this.#filmsModel.deleteFilm(updateType, update);
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {

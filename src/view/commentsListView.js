@@ -1,9 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { humanizeCommentDate } from '../utils/films';
 
-const isDeleting = false;
-
-function createCommentsListTemplate(comments, isDeleting) {
+function createCommentsListTemplate(comments, currentComment) {
   const createComments = (arr) =>
     arr
       .map(
@@ -17,9 +15,10 @@ function createCommentsListTemplate(comments, isDeleting) {
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${humanizeCommentDate(date)}</span>
-                <button class="film-details__comment-delete" data-id="${id}" >${
-          isDeleting ? 'Deleting...' : 'Delete'
-        }</button>
+                <button class="film-details__comment-delete" data-id="${id}" > ${
+          id === currentComment.id ? 'Deleting...' : 'Delete'
+        }
+               </button>
               </p>
             </div>
           </li>`
@@ -51,7 +50,7 @@ export default class CommentsListView extends AbstractStatefulView {
   }
 
   get template() {
-    return createCommentsListTemplate(this.#comments, isDeleting);
+    return createCommentsListTemplate(this.#comments, this._state);
   }
 
   setDeleteClickHandler = (callback) => {
@@ -64,9 +63,13 @@ export default class CommentsListView extends AbstractStatefulView {
   #commentDeleteClickHandler = (evt) => {
     evt.preventDefault();
     const currentId = evt.target.dataset.id;
-    const currentComment = this.#comments.find((comment) => comment.id === currentId);
+    let currentComment = this.#comments.find((comment) => comment.id === currentId);
+    currentComment = {
+      isDeleting: true,
+      ...currentComment,
+    };
     this._setState({
-      /**/
+      currentComment,
     });
     this._callback.deleteClick(currentComment);
   };

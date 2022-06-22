@@ -12,10 +12,6 @@ export default class FilmsApiService extends ApiService {
     return this._load({ url: 'movies' }).then(ApiService.parseResponse);
   }
 
-  /*    getComments = (film) => {
-    return this._load({ url: `comments/${film.id}` }).then(ApiService.parseResponse);
-  };
-  */
   getComments = async (id) => {
     const response = await this._load({ url: `comments/${id}` });
     return ApiService.parseResponse(response);
@@ -45,20 +41,6 @@ export default class FilmsApiService extends ApiService {
 
     return await ApiService.parseResponse(response);
   };
-
-  /* 
-  addComment = async (comment ) => {
-    const response = await this._load({
-      url: `comments/${film.id}`,
-      method: Method.POST,
-      body: JSON.stringify(comment),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
-    });
-
-    const parsedResponse = await ApiService.parseResponse(response);
-
-    return parsedResponse;
-  }; */
 
   deleteComment = async (comment) => {
     const response = await this._load({
@@ -110,17 +92,3 @@ export default class FilmsApiService extends ApiService {
     return adaptedFilm;
   };
 }
-
-/* 
-     getComments = async (film) => {
-    const actualId = film.id;
-    const response = await this._load({
-      url: `'comments/:${actualId}'`,
-      method: Method.GET,
-      body: JSON.stringify(updatedFilm),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
-    });
-    const parsedResponse = await ApiService.parseResponse(response);
-
-    return parsedResponse;
-  }; */
