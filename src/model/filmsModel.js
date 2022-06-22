@@ -76,7 +76,7 @@ export default class FilmsModel extends Observable {
       throw new Error("Can't update unexisting film");
     }
 
-    this._notify(updateType, update);
+    //this._notify(updateType, update);
 
     try {
       const response = await this.#filmsApiService.updateFilm(update);

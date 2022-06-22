@@ -1,7 +1,9 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { humanizeCommentDate } from '../utils/films';
 
-function createCommentsListTemplate(comments) {
+const isDeleting = false;
+
+function createCommentsListTemplate(comments, isDeleting) {
   const createComments = (arr) =>
     arr
       .map(
@@ -15,7 +17,9 @@ function createCommentsListTemplate(comments) {
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
                 <span class="film-details__comment-day">${humanizeCommentDate(date)}</span>
-                <button class="film-details__comment-delete" data-id="${id}">Delete</button>
+                <button class="film-details__comment-delete" data-id="${id}" >${
+          isDeleting ? 'Deleting...' : 'Delete'
+        }</button>
               </p>
             </div>
           </li>`
@@ -38,18 +42,16 @@ function createCommentsListTemplate(comments) {
 `;
 }
 
-export default class CommentsListView extends AbstractView {
-  //#filtercomments = null;
+export default class CommentsListView extends AbstractStatefulView {
   #comments = null;
 
   constructor(comments) {
     super();
-    //this.#filtercomments = filtercomments;
     this.#comments = comments;
   }
 
   get template() {
-    return createCommentsListTemplate(this.#comments);
+    return createCommentsListTemplate(this.#comments, isDeleting);
   }
 
   setDeleteClickHandler = (callback) => {
@@ -63,7 +65,15 @@ export default class CommentsListView extends AbstractView {
     evt.preventDefault();
     const currentId = evt.target.dataset.id;
     const currentComment = this.#comments.find((comment) => comment.id === currentId);
-
+    this._setState({
+      /**/
+    });
     this._callback.deleteClick(currentComment);
+  };
+
+  _restoreHandlers = () => {
+    this.element
+      .querySelectorAll('.film-details__comment-delete')
+      .forEach((commentDeleteBtn) => commentDeleteBtn.addEventListener('click', this.#commentDeleteClickHandler));
   };
 }

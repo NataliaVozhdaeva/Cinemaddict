@@ -10,6 +10,7 @@ import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
 import { sortByDate, sortByRating } from '../utils/films.js';
 import { filter } from '../utils/filters.js';
 import LoadingView from '../view/loading-view.js';
+import ControlBtnsView from '../view/controlBtnsView.js';
 
 const FILMCARD_PER_STEP = 5;
 const footer = document.querySelector('footer');
@@ -22,7 +23,7 @@ export default class FilmsBoardPresenter {
   #sortComponent = null;
   #noFilmsComponent = null;
   #filterModel = null;
-
+  #controlBtns = new ControlBtnsView();
   #loadingComponent = new LoadingView();
 
   #cardsPresenter = new Map();
@@ -44,6 +45,7 @@ export default class FilmsBoardPresenter {
     this.#filterModel.addObserver(this.#handleModelEvent);
 
     this.#filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#handleViewAction);
+    //this.#controlBtns = new ControlBtnsView();
   }
 
   get films() {
@@ -105,6 +107,7 @@ export default class FilmsBoardPresenter {
       this.#filmCardsContainer.element,
       this.#handleViewAction,
       this.#filmDetailsPresenter
+      /*  this.#controlBtns */
     );
     cardsPresenter.show(film, this.allComments);
     this.#cardsPresenter.set(film.id, cardsPresenter);
@@ -139,10 +142,15 @@ export default class FilmsBoardPresenter {
     }
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_COMPONENT:
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch (err) {
+          this.#cardsPresenter.get(update.id).setAborting();
+          this.#filmDetailsPresenter.setAborting();
+        }
         break;
       case UserAction.ADD_COMPONENT:
         this.#filmsModel.addFilm(updateType, update);
@@ -157,15 +165,12 @@ export default class FilmsBoardPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#cardsPresenter.get(data.id).show(data);
-
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
         this.#renderFilmList();
         if (this.#filmDetailsPresenter.film !== null) {
-          //this.#newComment.reset({});
           this.#filmDetailsPresenter.show(data);
-          console.log(this.#filmDetailsPresenter.mode);
         }
         break;
       case UpdateType.MAJOR:

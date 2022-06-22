@@ -59,7 +59,7 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsForm = new FilmDetailsFormView();
     this.#filmDetailsComponent = new FilmDetailsView(this.film);
     this.#commentsList = new CommentsListView(this.comments);
-    this.#newComment = new NewCommentView(this.comments);
+    this.#newComment = new NewCommentView();
 
     this.#filmDetailsComponent.setPopupCloseHandler(this.#closePopupHandler);
     this.#commentsList.setDeleteClickHandler(this.#handleDeleteClick);
@@ -112,7 +112,6 @@ export default class FilmDetailsPresenter {
       return;
     }
     render(this.#commentsList, this.#filmDetailsForm.element);
-    console.log(this.comments);
   };
 
   #renderNewCommentSection = () => {
@@ -160,25 +159,42 @@ export default class FilmDetailsPresenter {
     });
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
+      /*   case UserAction.UPDATE_COMPONENT:
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch (err) {
+          this.#filmDetailsComponent.setAborting();
+        }
+
+        break; */
       case UserAction.ADD_COMPONENT:
-        this.#commentsModel.addComment(updateType, update, this.film);
+        this.setSaving();
+        try {
+          await this.#commentsModel.addComment(updateType, update, this.film);
+        } catch (err) {
+          this.setFilmDetailsFormAborting();
+        }
         break;
       case UserAction.DELETE_COMPONENT:
-        this.#commentsModel.deleteComment(updateType, update);
+        this.setDeleting();
+        try {
+          await this.#commentsModel.deleteComment(updateType, update);
+        } catch (err) {
+          this.setDeleteCommentAborting();
+        }
+
         break;
     }
   };
 
-  #handleModelEvent = (updateType, update, filmsComments) => {
-    filmsComments = this.film.comments;
-
+  #handleModelEvent = (updateType) => {
     switch (updateType) {
-      case UpdateType.PATCH:
+      /* case UpdateType.PATCH:
         this.show(this.film);
-        /* this.#renderComments(); */
-        break;
+         this.#renderComments(); 
+        break; */
       case UpdateType.MINOR:
         /* this.#renderComments(); */
         this.show(this.film);
@@ -200,12 +216,12 @@ export default class FilmDetailsPresenter {
   };
 
   #handleDeleteClick = (comment) => {
-    this.#handleViewAction(UserAction.DELETE_COMPONENT, UpdateType.PATCH, comment);
+    this.#handleViewAction(UserAction.DELETE_COMPONENT, UpdateType.MINOR, comment);
   };
 
   #handleAddNewComment = (comment) => {
     // console.log('handleAddNewComment');
-    this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.PATCH, comment);
+    this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.MINOR, comment);
   };
 
   destroy = () => {
@@ -214,20 +230,32 @@ export default class FilmDetailsPresenter {
     }
     remove(this.#filmDetailsSection);
   };
+
+  setSaving = () => {
+    this.#newComment.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setDeleting = () => {
+    this.#commentsList.updateElement({
+      isDeleting: true,
+    });
+  };
+
+  setFilmDetailsFormAborting = () => {
+    const resetState = () => {
+      this.#newComment.updateElement({
+        isDisabled: false,
+        isSaving: false,
+      });
+    };
+
+    this.#filmDetailsForm.shake(resetState);
+  };
+
+  setDeleteCommentAborting = () => {
+    this.#commentsList.shake();
+  };
 }
-
-/*  #filterComments = () => {
-    const allComments = this.comments;
-    const commentForFilm = this.#film.comments;
-    const actualComments = allComments.filter(({ id }) => commentForFilm.some((commentId) => commentId === id));
-    return actualComments;
-  };
-
- 
-  const handleNewTaskButtonClick = () => {
-    boardPresenter.createTask(handleNewTaskSectionClose);
-    newTaskButtonComponent.element.disabled = true;
-  };
-   get comments (){ const comments = async (film) => { await this.#commentsModel.init(film).then(() => this.#commentsModel.comments);
-    return comments()
-  */

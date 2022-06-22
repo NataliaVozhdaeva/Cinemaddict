@@ -7,9 +7,11 @@ const BLANK_COMMENT = {
   comment: '',
   date: '2022-05-11T16:12:32.554Z',
   emotion: null,
+  isDisabled: true,
+  isSaving: true,
 };
 
-function createNewCommentFormTemplate(newComment) {
+function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
   const createEmogiList = () =>
     EMOGI.map(
       (emogi) => `
@@ -20,8 +22,9 @@ function createNewCommentFormTemplate(newComment) {
       id="emoji-${emogi}" 
       value="${emogi}"
       ${emogi === newComment.emotion ? 'checked' : ''}
+     
       >
-    <label class="film-details__emoji-label" for="emoji-${emogi}">
+    <label  ${isDisabled ? 'disabled' : ''}class="film-details__emoji-label" for="emoji-${emogi}">
       <img src="./images/emoji/${emogi}.png" width="30" height="30" alt="${emogi}">
     </label>`
     ).join('');
@@ -39,7 +42,7 @@ function createNewCommentFormTemplate(newComment) {
     <div class="film-details__add-emoji-label">${addNewEmogi}</div>
       <label class="film-details__comment-label">
         <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" 
-        name="comment">${textComment}</textarea>
+        name="comment" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'loading...' : textComment}</textarea>
       </label>
       <div class="film-details__emoji-list">
         ${emogiList}
@@ -51,12 +54,10 @@ export default class NewCommentView extends AbstractStatefulView {
   emotions = [];
   #removeListener = null;
 
-  constructor(allComments, newComment = BLANK_COMMENT) {
+  constructor(newComment = BLANK_COMMENT) {
     super();
     this._state = NewCommentView.parseCommentToState(newComment);
     this.#setInnerHandlers();
-    this.allComments = allComments;
-    //console.log('view ', this.allComments);
   }
 
   #setInnerHandlers = () => {
@@ -92,10 +93,6 @@ export default class NewCommentView extends AbstractStatefulView {
 
   #saveData = () => {
     this._callback.addNewComment(NewCommentView.parseStateToComment(this._state));
-
-    /*  const readyNewComment =  NewCommentView.parseStateToComment(this._state); */
-    //this.allComments.push(readyNewComment);
-    //console.log(this.allComments);
   };
 
   #emogiToggleHandler = (evt) => {
@@ -103,7 +100,7 @@ export default class NewCommentView extends AbstractStatefulView {
     this.updateElement({
       emotion: evt.target.value,
     });
-    //this.#removeListener();
+    //this.removeListeners();
   };
 
   #newCommentTextHandler = (evt) => {
@@ -118,25 +115,29 @@ export default class NewCommentView extends AbstractStatefulView {
     // this.removeListeners();
   };
 
-  reset = (newComment) => {
+  /*  reset = (newComment) => {
     this.updateElement(NewCommentView.parsCommentToState(newComment));
-  };
+  }; */
 
-  /* removeListeners = () => {
+  removeListeners = () => {
     this.element
       .querySelectorAll('.film-details__emoji-item')
       .forEach((emogi) => emogi.removeEventListener('click', this.#emogiToggleHandler));
     this.element
       .querySelector('.film-details__comment-input')
       .removeEventListener('input', this.#newCommentTextHandler);
-  }; */
+  };
 
   static parseCommentToState = (newComment) => ({
     ...newComment,
+    isDisabled: false,
+    isSaving: false,
   });
 
   static parseStateToComment = (state) => {
     const newComment = { ...state };
+    delete newComment.isDisabled;
+    delete newComment.isSaving;
     this._setState = {};
     return newComment;
   };

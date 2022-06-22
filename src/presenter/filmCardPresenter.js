@@ -92,4 +92,8 @@ export default class FilmCardPresenter {
   destroy = () => {
     remove(this.#filmCard);
   };
+
+  setAborting = () => {
+    this.#filmCard.shake();
+  };
 }
