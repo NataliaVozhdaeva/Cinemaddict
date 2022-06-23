@@ -145,7 +145,7 @@ export default class FilmsBoardPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
-    this.#uiBlocker.block();
+    //this.#uiBlocker.block();
     switch (actionType) {
       case UserAction.UPDATE_COMPONENT:
         try {
@@ -153,6 +153,9 @@ export default class FilmsBoardPresenter {
         } catch (err) {
           this.#cardsPresenter.get(update.id).setAborting();
           this.#filmDetailsPresenter.setAborting();
+          /* if (this.#filmDetailsPresenter.film !== null) {
+            this.#filmDetailsPresenter.setAborting();
+          } */
         }
         break;
       case UserAction.ADD_COMPONENT:
@@ -162,7 +165,7 @@ export default class FilmsBoardPresenter {
         this.#filmsModel.deleteFilm(updateType, update);
         break;
     }
-    this.#uiBlocker.unblock();
+    //this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {

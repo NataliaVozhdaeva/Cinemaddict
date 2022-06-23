@@ -6,7 +6,7 @@ function createCommentsListTemplate(comments, currentComment) {
     arr
       .map(
         ({ date, author, comment, emotion, id }) => `
-      <li class="film-details__comment">
+      <li class="film-details__comment id${id}">
          <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
             </span> 

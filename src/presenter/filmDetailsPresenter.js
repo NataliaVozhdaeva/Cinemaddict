@@ -48,7 +48,7 @@ export default class FilmDetailsPresenter {
 
   show = async (film) => {
     this.film = film;
-    const comments = await this.#commentsModel.init(this.film.id).then(() => this.#commentsModel.comments);
+    await this.#commentsModel.init(this.film.id).then(() => this.#commentsModel.comments);
     this.#userDetails = this.film.userDetails;
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
     this.prevFilmDetailsSection = this.#filmDetailsSection;
@@ -173,7 +173,7 @@ export default class FilmDetailsPresenter {
         try {
           await this.#commentsModel.deleteComment(updateType, update);
         } catch (err) {
-          this.setDeleteCommentAborting();
+          this.setDeleteCommentAborting(update);
         }
 
         break;
@@ -220,6 +220,11 @@ export default class FilmDetailsPresenter {
 
   setDeleting = (currentComment) => {
     this.#commentsList.updateElement(currentComment);
+    this.#renderNewCommentSection();
+  };
+
+  setAborting = () => {
+    this.#filmDetailsSection.shake();
   };
 
   setFilmDetailsFormAborting = () => {
@@ -235,10 +240,9 @@ export default class FilmDetailsPresenter {
 
   setDeleteCommentAborting = () => {
     const resetState = () => {
-      this.#commentsList.updateElement({
-        isDeleting,
-      });
+      this.#commentsList.updateElement();
     };
     this.#commentsList.shake(resetState);
+    this.#renderNewCommentSection();
   };
 }
