@@ -12,9 +12,9 @@ import { filter } from '../utils/filters.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import UserView from '../view/userView';
+import FooterView from '../view/footer-view.js';
 
 const FILMCARD_PER_STEP = 5;
-const footer = document.querySelector('footer');
 const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
@@ -23,13 +23,15 @@ const TimeLimit = {
 export default class FilmsBoardPresenter {
   #filmSection = null;
   #headerSection = null;
+  #footerSection = null;
   #filmsModel = null;
   #showMoreBtn = null;
   #filmDetailsPresenter = null;
   #sortComponent = null;
   #noFilmsComponent = null;
   #filterModel = null;
-  #userSection = null;
+  #userComponent = null;
+  #footerStatistic = null;
 
   #loadingComponent = new LoadingView();
   #filmList = new FilmListView();
@@ -43,16 +45,17 @@ export default class FilmsBoardPresenter {
   #filterType = FilterType.ALL;
   #isLoading = true;
 
-  constructor(filmSection, filmsModel, filterModel, headerSection) {
+  constructor(filmSection, filmsModel, filterModel, headerSection, footerSection) {
     this.#filmSection = filmSection;
     this.#headerSection = headerSection;
+    this.#footerSection = footerSection;
     this.#filmsModel = filmsModel;
     this.#filterModel = filterModel;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
 
-    this.#filmDetailsPresenter = new FilmDetailsPresenter(footer, this.#handleViewAction);
+    this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#footerSection, this.#handleViewAction);
   }
 
   get films() {
@@ -87,9 +90,14 @@ export default class FilmsBoardPresenter {
     }
   };
 
-  #renderUserSection = () => {
-    this.#userSection = new UserView(this.#filmsModel.films);
-    render(this.#userSection, this.#headerSection);
+  #renderUserComponent = () => {
+    this.#userComponent = new UserView(this.#filmsModel.films);
+    render(this.#userComponent, this.#headerSection);
+  };
+
+  #renderFooterStatistic = () => {
+    this.#footerStatistic = new FooterView(this.#filmsModel.films);
+    render(this.#footerStatistic, this.#footerSection);
   };
 
   #renderSort = () => {
@@ -174,8 +182,8 @@ export default class FilmsBoardPresenter {
         this.#cardsPresenter.get(data.id).show(data);
         break;
       case UpdateType.MINOR:
-        remove(this.#userSection);
-        this.#renderUserSection();
+        remove(this.#userComponent);
+        this.#renderUserComponent();
         this.#clearBoard();
         this.#renderFilmList();
         if (this.#filmDetailsPresenter.film !== null) {
@@ -189,8 +197,9 @@ export default class FilmsBoardPresenter {
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
-        this.#renderUserSection();
+        this.#renderUserComponent();
         this.#renderFilmList();
+        this.#renderFooterStatistic();
         break;
     }
   };

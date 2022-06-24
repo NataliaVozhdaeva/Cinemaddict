@@ -7,7 +7,6 @@ import CommentsModel from '../model/commentsModel.js';
 import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 import LoadingView from '../view/loading-view.js';
-//import { nanoid } from 'nanoid';
 
 import FilmsApiService from '../films-api-service.js';
 

@@ -39,7 +39,6 @@ export default class UserView extends AbstractView {
   constructor(films) {
     super();
     this.#films = films;
-    //console.log(this.#films);
   }
 
   get template() {
