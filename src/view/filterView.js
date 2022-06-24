@@ -2,7 +2,6 @@ import AbstractView from '../framework/view/abstract-view.js';
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const { type, name, count } = filter;
-  // let countTemplate;
 
   const filteredFilms = name !== 'All movies' ? `<span class="main-navigation__item-count">${count}</span>` : '';
 
