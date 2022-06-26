@@ -84,9 +84,9 @@ export default class FilmDetailsPresenter {
       this.#renderNewCommentSection();
     }
 
-    if (this.#newComment) {
+    /*  if (this.#newComment) {
       this.#newComment.removeElement();
-    }
+    } */
   };
 
   #renderPopup = () => {

@@ -1,4 +1,4 @@
-import { render, remove } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 import SortListView from '../view/sortView.js';
 import FilmCardsContainerView from '../view/filmCardsContainerView';
 import FilmListView from '../view/filmListView';
@@ -13,6 +13,8 @@ import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import UserView from '../view/userView';
 import FooterView from '../view/footer-view.js';
+import MostRatedView from '../view/most-rated-view.js';
+import FilmSectionView from '../view/films-section-view.js';
 
 const FILMCARD_PER_STEP = 5;
 const TimeLimit = {
@@ -21,7 +23,7 @@ const TimeLimit = {
 };
 
 export default class FilmsBoardPresenter {
-  #filmSection = null;
+  #filmMainContainer = null;
   #headerSection = null;
   #footerSection = null;
   #filmsModel = null;
@@ -32,10 +34,13 @@ export default class FilmsBoardPresenter {
   #filterModel = null;
   #userComponent = null;
   #footerStatistic = null;
+  #mostRatedComponent = null;
+  #filmCardsContainer = null;
 
   #loadingComponent = new LoadingView();
+  #filmsSection = new FilmSectionView();
   #filmList = new FilmListView();
-  #filmCardsContainer = new FilmCardsContainerView();
+
   #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   #cardsPresenter = new Map();
@@ -45,8 +50,8 @@ export default class FilmsBoardPresenter {
   #filterType = FilterType.ALL;
   #isLoading = true;
 
-  constructor(filmSection, filmsModel, filterModel, headerSection, footerSection) {
-    this.#filmSection = filmSection;
+  constructor(filmMainContainer, filmsModel, filterModel, headerSection, footerSection) {
+    this.#filmMainContainer = filmMainContainer;
     this.#headerSection = headerSection;
     this.#footerSection = footerSection;
     this.#filmsModel = filmsModel;
@@ -74,7 +79,7 @@ export default class FilmsBoardPresenter {
   }
 
   show = () => {
-    this.#renderFilmList();
+    this.#renderFilmsSection();
   };
 
   #handleShowMoreBtnClick = () => {
@@ -88,6 +93,10 @@ export default class FilmsBoardPresenter {
     if (this.#renderedFilmCards >= filmCount) {
       remove(this.#showMoreBtn);
     }
+  };
+
+  #renderFilmsSection = () => {
+    render(this.#filmsSection, this.#filmMainContainer);
   };
 
   #renderUserComponent = () => {
@@ -104,7 +113,7 @@ export default class FilmsBoardPresenter {
     this.#sortComponent = new SortListView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
 
-    render(this.#sortComponent, this.#filmList.element);
+    render(this.#sortComponent, this.#filmsSection.element, RenderPosition.BEFOREBEGIN);
   };
 
   #renderLoading = () => {
@@ -113,7 +122,7 @@ export default class FilmsBoardPresenter {
 
   #renderNoFilms = () => {
     this.#noFilmsComponent = new NoFilmView(this.#filterType);
-    render(this.#noFilmsComponent, this.#filmSection);
+    render(this.#noFilmsComponent, this.#filmMainContainer);
   };
 
   #renderShowMoreBtn = () => {
@@ -137,7 +146,7 @@ export default class FilmsBoardPresenter {
   };
 
   #renderFilmList = () => {
-    render(this.#filmList, this.#filmSection);
+    render(this.#filmList, this.#filmsSection.element);
 
     if (this.#isLoading) {
       this.#renderLoading();
@@ -152,6 +161,8 @@ export default class FilmsBoardPresenter {
       return;
     }
 
+    this.#filmCardsContainer = new FilmCardsContainerView();
+
     this.#renderSort();
     render(this.#filmCardsContainer, this.#filmList.element);
     this.#renderManyCards(films.slice(0, Math.min(filmCount, this.#renderedFilmCards)));
@@ -159,6 +170,21 @@ export default class FilmsBoardPresenter {
     if (filmCount > this.#renderedFilmCards) {
       this.#renderShowMoreBtn();
     }
+
+    this.#renderMostRatedComponent();
+  };
+
+  #renderMostRatedComponent = () => {
+    const currentilmCount = 2;
+    this.films.sort(sortByRating);
+    const currentFilms = this.films.slice(0, currentilmCount);
+
+    this.#mostRatedComponent = new MostRatedView();
+    this.#filmCardsContainer = new FilmCardsContainerView();
+
+    render(this.#mostRatedComponent, this.#filmsSection.element);
+    render(this.#filmCardsContainer, this.#mostRatedComponent.element);
+    this.#renderManyCards(currentFilms);
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
@@ -183,6 +209,7 @@ export default class FilmsBoardPresenter {
         break;
       case UpdateType.MINOR:
         remove(this.#userComponent);
+
         this.#renderUserComponent();
         this.#clearBoard();
         this.#renderFilmList();
@@ -223,6 +250,7 @@ export default class FilmsBoardPresenter {
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
     remove(this.#showMoreBtn);
+    remove(this.#mostRatedComponent);
 
     if (this.#noFilmsComponent) {
       remove(this.#noFilmsComponent);

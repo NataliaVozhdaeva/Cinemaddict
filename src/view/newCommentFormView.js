@@ -5,10 +5,8 @@ const BLANK_COMMENT = {
   id: null,
   author: null,
   comment: '',
-  date: '2022-05-11T16:12:32.554Z',
+  date: null,
   emotion: null,
-  isDisabled: true,
-  isSaving: true,
 };
 
 function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
@@ -35,7 +33,7 @@ function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
   const addNewEmogi =
     newComment.emotion !== null
       ? `<img src="./images/emoji/${newComment.emotion}.png" width="55" height="55" alt="${newComment.emotion}"> `
-      : '';
+      : '<img src="./images/emoji/smile.png" alt="smile" width="55" height="55">';
 
   return `
     <div class="film-details__new-comment">
@@ -49,6 +47,18 @@ function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
       </div>
     </div>`;
 }
+const pressKeyHandler = (cb) => {
+  const listener = (evt) => {
+    if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
+      cb();
+      document.removeEventListener('keydown', listener);
+    }
+  };
+
+  document.addEventListener('keydown', listener);
+
+  return () => document.removeEventListener('keydown', listener);
+};
 
 export default class NewCommentView extends AbstractStatefulView {
   emotions = [];
@@ -67,19 +77,10 @@ export default class NewCommentView extends AbstractStatefulView {
 
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextHandler);
 
-    const pressKeyHandler = () => {
-      const listener = (evt) => {
-        if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
-          this.#saveData();
-          document.removeEventListener('keydown', listener);
-        }
-      };
-
-      document.addEventListener('keydown', listener);
-
-      return () => document.removeEventListener('keydown', listener);
-    };
-    pressKeyHandler(this.newComment);
+    if (this.#removeListener) {
+      this.#removeListener();
+    }
+    this.#removeListener = pressKeyHandler(this.#saveData);
   };
 
   setAddNewCommentHandler = (callback) => {
@@ -124,19 +125,14 @@ export default class NewCommentView extends AbstractStatefulView {
   });
 
   static parseStateToComment = (state) => {
+    delete state.isDisabled;
+    delete state.isSaving;
     const newComment = { ...state };
-    delete newComment.isDisabled;
-    delete newComment.isSaving;
-    this._setState = {};
+    state = BLANK_COMMENT;
     return newComment;
   };
 
   get template() {
     return createNewCommentFormTemplate(this._state);
-  }
-
-  remove() {
-    this.#removeListener();
-    this.#removeListener = null;
   }
 }
