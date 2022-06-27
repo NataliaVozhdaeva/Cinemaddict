@@ -36,14 +36,17 @@ export default class FilmsBoardPresenter {
   #footerStatistic = null;
   #mostRatedComponent = null;
   #filmCardsContainer = null;
+  #filmsTopContainer = null;
 
   #loadingComponent = new LoadingView();
   #filmsSection = new FilmSectionView();
   #filmList = new FilmListView();
+  //#filmCardsContainer = new FilmCardsContainerView();
 
   #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   #cardsPresenter = new Map();
+  #topCardsPresenter = new Map();
 
   #renderedFilmCards = FILMCARD_PER_STEP;
   #currentSortType = SortType.DEFAULT;
@@ -67,12 +70,15 @@ export default class FilmsBoardPresenter {
     this.#filterType = this.#filterModel.filter;
     const films = this.#filmsModel.films;
     const filteredFilms = filter[this.#filterType](films);
+    //const basedFilms = filteredFilms;
 
     switch (this.#currentSortType) {
       case SortType.BY_DATE:
         return filteredFilms.sort(sortByDate);
       case SortType.BY_RATING:
         return filteredFilms.sort(sortByRating);
+      /* case SortType.DEFAULT:
+        return basedFilms; */
     }
 
     return filteredFilms;
@@ -97,6 +103,7 @@ export default class FilmsBoardPresenter {
 
   #renderFilmsSection = () => {
     render(this.#filmsSection, this.#filmMainContainer);
+    this.#renderSort();
   };
 
   #renderUserComponent = () => {
@@ -145,8 +152,13 @@ export default class FilmsBoardPresenter {
     films.forEach((film) => this.#renderOneFilmCard(film));
   };
 
+  /*  #renderCardContainer = () => {
+    this.#filmCardsContainer = new FilmCardsContainerView();
+    render(this.#filmCardsContainer, this.#filmList.element);
+  }; */
+
   #renderFilmList = () => {
-    render(this.#filmList, this.#filmsSection.element);
+    render(this.#filmList, this.#filmsSection.element, RenderPosition.AFTERBEGIN);
 
     if (this.#isLoading) {
       this.#renderLoading();
@@ -162,16 +174,13 @@ export default class FilmsBoardPresenter {
     }
 
     this.#filmCardsContainer = new FilmCardsContainerView();
-
-    this.#renderSort();
     render(this.#filmCardsContainer, this.#filmList.element);
+
     this.#renderManyCards(films.slice(0, Math.min(filmCount, this.#renderedFilmCards)));
 
     if (filmCount > this.#renderedFilmCards) {
       this.#renderShowMoreBtn();
     }
-
-    this.#renderMostRatedComponent();
   };
 
   #renderMostRatedComponent = () => {
@@ -180,11 +189,26 @@ export default class FilmsBoardPresenter {
     const currentFilms = this.films.slice(0, currentilmCount);
 
     this.#mostRatedComponent = new MostRatedView();
-    this.#filmCardsContainer = new FilmCardsContainerView();
-
     render(this.#mostRatedComponent, this.#filmsSection.element);
-    render(this.#filmCardsContainer, this.#mostRatedComponent.element);
-    this.#renderManyCards(currentFilms);
+
+    this.#filmsTopContainer = new FilmCardsContainerView();
+    render(this.#filmsTopContainer, this.#mostRatedComponent.element);
+
+    this.#rendeTopFilmsCards(currentFilms);
+  };
+
+  #rendeTopFilmsCards = (currentFilms) => {
+    currentFilms.forEach((film) => this.#renderOneTopCard(film));
+  };
+
+  #renderOneTopCard = (film) => {
+    const topCardsPresenter = new FilmCardPresenter(
+      this.#filmsTopContainer.element,
+      this.#handleViewAction,
+      this.#filmDetailsPresenter
+    );
+    topCardsPresenter.show(film, this.allComments);
+    this.#topCardsPresenter.set(film.id, topCardsPresenter);
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
@@ -209,16 +233,19 @@ export default class FilmsBoardPresenter {
         break;
       case UpdateType.MINOR:
         remove(this.#userComponent);
-
+        remove(this.#mostRatedComponent);
         this.#renderUserComponent();
         this.#clearBoard();
+        this.#renderSort();
         this.#renderFilmList();
         if (this.#filmDetailsPresenter.film !== null) {
           this.#filmDetailsPresenter.show(data);
         }
+        this.#renderMostRatedComponent();
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({ resetRenderedFilmCards: true, resetSortType: true });
+        this.#renderSort();
         this.#renderFilmList();
         break;
       case UpdateType.INIT:
@@ -226,6 +253,7 @@ export default class FilmsBoardPresenter {
         remove(this.#loadingComponent);
         this.#renderUserComponent();
         this.#renderFilmList();
+        this.#renderMostRatedComponent();
         this.#renderFooterStatistic();
         break;
     }
@@ -238,6 +266,7 @@ export default class FilmsBoardPresenter {
 
     this.#currentSortType = sortType;
     this.#clearBoard({ resetRenderedFilmCards: true });
+    this.#renderSort();
     this.#renderFilmList();
   };
 
@@ -250,7 +279,7 @@ export default class FilmsBoardPresenter {
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
     remove(this.#showMoreBtn);
-    remove(this.#mostRatedComponent);
+    remove(this.#filmCardsContainer);
 
     if (this.#noFilmsComponent) {
       remove(this.#noFilmsComponent);
