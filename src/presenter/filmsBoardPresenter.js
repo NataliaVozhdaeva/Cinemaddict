@@ -256,6 +256,8 @@ export default class FilmsBoardPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#cardsPresenter.get(data.id).show(data);
+        remove(this.#mostCommentedComponent);
+        this.#renderMostCommentedComponent();
         break;
       case UpdateType.MINOR:
         remove(this.#userComponent);

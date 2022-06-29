@@ -33,7 +33,7 @@ export default class CommentsModel extends Observable {
     } catch (err) {
       throw new Error("Can't add comment");
     }
-    this._notify(updateType, update);
+    this._notify(updateType, update, updatedFilm);
   };
 
   deleteComment = async (updateType, update) => {

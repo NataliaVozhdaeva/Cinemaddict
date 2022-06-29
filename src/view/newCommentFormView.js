@@ -6,7 +6,7 @@ const BLANK_COMMENT = {
   author: null,
   comment: '',
   date: null,
-  emotion: null,
+  emotion: 'smile',
 };
 
 function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
@@ -33,7 +33,7 @@ function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
   const addNewEmogi =
     newComment.emotion !== null
       ? `<img src="./images/emoji/${newComment.emotion}.png" width="55" height="55" alt="${newComment.emotion}"> `
-      : '<img src="./images/emoji/smile.png" alt="smile" width="55" height="55">';
+      : '';
 
   return `
     <div class="film-details__new-comment">
@@ -51,7 +51,7 @@ const pressKeyHandler = (cb) => {
   const listener = (evt) => {
     if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
       cb();
-      document.removeEventListener('keydown', listener);
+      //document.removeEventListener('keydown', listener);
     }
   };
 
@@ -88,7 +88,15 @@ export default class NewCommentView extends AbstractStatefulView {
   };
 
   #saveData = () => {
-    this._callback.addNewComment(NewCommentView.parseStateToComment(this._state));
+    //this._callback.addNewComment(NewCommentView.parseStateToComment(this._state));
+    if (!this._state.comment || !this._state.emotion) {
+      return;
+    }
+
+    const comment = NewCommentView.parseStateToComment(this._state);
+    //comment.commentText = he.encode(comment.comment);
+    this.reset(BLANK_COMMENT);
+    this._callback.addNewComment(comment);
   };
 
   #emogiToggleHandler = (evt) => {
@@ -127,9 +135,11 @@ export default class NewCommentView extends AbstractStatefulView {
   static parseStateToComment = (state) => {
     delete state.isDisabled;
     delete state.isSaving;
-    const newComment = { ...state };
-    state = BLANK_COMMENT;
-    return newComment;
+    return { ...state };
+  };
+
+  reset = (comment) => {
+    this.updateElement(NewCommentView.parseCommentToState(comment));
   };
 
   get template() {

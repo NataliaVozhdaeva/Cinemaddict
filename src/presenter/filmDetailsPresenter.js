@@ -7,6 +7,7 @@ import CommentsModel from '../model/commentsModel.js';
 import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 import LoadingView from '../view/loading-view.js';
+//import FilmsBoardPresenter from './filmsBoardPresenter';
 
 import FilmsApiService from '../films-api-service.js';
 
@@ -183,6 +184,7 @@ export default class FilmDetailsPresenter {
     switch (updateType) {
       case UpdateType.MINOR:
         this.show(this.film);
+        this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.PATCH, this.film);
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
