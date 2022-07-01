@@ -7,11 +7,17 @@ const createUserSection = (films) => {
     userDetailsArr.push(film.userDetails);
   });
 
-  let counter = 0;
+  const createUserRating = function () {
+    let counter = 0;
+    userDetailsArr.forEach((element) => {
+      if (element.alreadyWatched) {
+        counter += 1;
+      }
+    });
+    return counter;
+  };
 
-  userDetailsArr.forEach((element) => {
-    element.alreadyWatched ? (counter += 1) : (counter = counter);
-  });
+  const watchedFilms = createUserRating();
 
   const countRang = function (counter) {
     if (counter > 20) {
@@ -25,7 +31,7 @@ const createUserSection = (films) => {
     }
   };
 
-  let rang = countRang(counter);
+  const rang = countRang(watchedFilms);
 
   return `<section class="header__profile profile">
     <p class="profile__rating">${rang}</p>

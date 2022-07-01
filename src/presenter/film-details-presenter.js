@@ -1,14 +1,12 @@
-import FilmDetailsView from '../view/filmDetailsView';
-import CommentsListView from '../view/commentsListView';
-import FilmDetailsSectionView from '../view/filmDetailsSectionView';
-import FilmDetailsFormView from '../view/filmDetailsFormView';
-import NewCommentView from '../view/newCommentFormView';
-import CommentsModel from '../model/commentsModel.js';
+import FilmDetailsView from '../view/film-details-view';
+import CommentsListView from '../view/comments-list-view';
+import FilmDetailsSectionView from '../view/film-details-section-view';
+import FilmDetailsFormView from '../view/film-details-form-view';
+import NewCommentView from '../view/new-comment-form-view';
+import CommentsModel from '../model/comments-model.js';
 import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 import LoadingView from '../view/loading-view.js';
-//import FilmsBoardPresenter from './filmsBoardPresenter';
-
 import FilmsApiService from '../films-api-service.js';
 
 const AUTHORIZATION = 'Basic nepeivinaGertruda';
@@ -42,7 +40,6 @@ export default class FilmDetailsPresenter {
   }
 
   get comments() {
-    // console.log(this.#commentsModel);
     return this.#commentsModel.comments;
   }
 
@@ -84,10 +81,6 @@ export default class FilmDetailsPresenter {
       replace(this.#commentsList, this.prevCommentsList);
       this.#renderNewCommentSection();
     }
-
-    /*  if (this.#newComment) {
-      this.#newComment.removeElement();
-    } */
   };
 
   #renderPopup = () => {

@@ -51,7 +51,6 @@ const pressKeyHandler = (cb) => {
   const listener = (evt) => {
     if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
       cb();
-      //document.removeEventListener('keydown', listener);
     }
   };
 
@@ -88,13 +87,11 @@ export default class NewCommentView extends AbstractStatefulView {
   };
 
   #saveData = () => {
-    //this._callback.addNewComment(NewCommentView.parseStateToComment(this._state));
     if (!this._state.comment || !this._state.emotion) {
       return;
     }
 
     const comment = NewCommentView.parseStateToComment(this._state);
-    //comment.commentText = he.encode(comment.comment);
     this.reset(BLANK_COMMENT);
     this._callback.addNewComment(comment);
   };

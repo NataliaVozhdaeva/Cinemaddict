@@ -1,17 +1,17 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
-import SortListView from '../view/sortView.js';
-import FilmCardsContainerView from '../view/filmCardsContainerView';
-import FilmListView from '../view/filmListView';
-import ShowmoreBtnView from '../view/showmoreBtnView';
-import NoFilmView from '../view/noFilmsView';
-import FilmCardPresenter from './filmCardPresenter';
-import FilmDetailsPresenter from './filmDetailsPresenter.js';
+import SortListView from '../view/sort-view.js';
+import FilmCardsContainerView from '../view/film-cards-container-view';
+import FilmListView from '../view/film-list-view';
+import ShowmoreBtnView from '../view/showmore-btn-view';
+import NoFilmView from '../view/no-films-view';
+import FilmCardPresenter from './film-card-presenter';
+import FilmDetailsPresenter from './film-details-presenter.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
 import { sortByDate, sortByRating, sortByCommentsLength } from '../utils/films.js';
 import { filter } from '../utils/filters.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
-import UserView from '../view/userView';
+import UserView from '../view/user-view';
 import FooterView from '../view/footer-view.js';
 import MostRatedView from '../view/most-rated-view.js';
 import MostCommentedView from '../view/most-commented-view.js';
@@ -71,7 +71,7 @@ export default class FilmsBoardPresenter {
 
   get films() {
     this.#filterType = this.#filterModel.filter;
-    let films = [];
+    const films = [];
     this.#filmsModel.films.forEach((film) => films.push(film));
     const filteredFilms = filter[this.#filterType](films);
 

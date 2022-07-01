@@ -1,7 +1,7 @@
-import FilmsBoardPresenter from './presenter/filmsBoardPresenter';
+import FilmsBoardPresenter from './presenter/films-board-presenter';
 import FilterPresenter from './presenter/filter-presenter.js';
-import FilmsModel from './model/filmsModel.js';
-import FilterModel from './model/filtersModel';
+import FilmsModel from './model/films-model.js';
+import FilterModel from './model/filters-model';
 import FilmsApiService from './films-api-service.js';
 
 const AUTHORIZATION = 'Basic nepeivinaGertruda';
