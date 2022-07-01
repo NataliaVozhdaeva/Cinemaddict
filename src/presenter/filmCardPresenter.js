@@ -39,6 +39,7 @@ export default class FilmCardPresenter {
 
     if (this.#filmCard !== prevFilmCard.element) {
       replace(this.#filmCard, prevFilmCard);
+      render(this.#controlBtns, this.#filmCard.element, RenderPosition.BEFOREEND);
     }
   };
 

@@ -16,7 +16,6 @@ import FooterView from '../view/footer-view.js';
 import MostRatedView from '../view/most-rated-view.js';
 import MostCommentedView from '../view/most-commented-view.js';
 import FilmSectionView from '../view/films-section-view.js';
-import CommentsModel from '../model/commentsModel.js';
 
 const FILMCARD_PER_STEP = 5;
 const TimeLimit = {
@@ -41,7 +40,6 @@ export default class FilmsBoardPresenter {
   #filmCardsContainer = null;
   #filmsTopContainer = null;
   #filmsCommentedContainer = null;
-  #defaultFilms = [];
 
   #loadingComponent = new LoadingView();
   #filmsSection = new FilmSectionView();
@@ -73,8 +71,8 @@ export default class FilmsBoardPresenter {
 
   get films() {
     this.#filterType = this.#filterModel.filter;
-    //const films = this.#defaultFilms;
-    const films = this.#filmsModel.films;
+    let films = [];
+    this.#filmsModel.films.forEach((film) => films.push(film));
     const filteredFilms = filter[this.#filterType](films);
 
     switch (this.#currentSortType) {
@@ -176,9 +174,6 @@ export default class FilmsBoardPresenter {
     render(this.#filmCardsContainer, this.#filmList.element);
 
     this.#renderManyCards(films.slice(0, Math.min(filmCount, this.#renderedFilmCards)));
-    this.films.forEach((film) => this.#defaultFilms.push(film));
-    console.log(films.slice(0, Math.min(filmCount, this.#renderedFilmCards)));
-    console.log(this.#defaultFilms);
 
     if (filmCount > this.#renderedFilmCards) {
       this.#renderShowMoreBtn();
@@ -240,7 +235,7 @@ export default class FilmsBoardPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
-    //this.#uiBlocker.block();
+    this.#uiBlocker.block();
     switch (actionType) {
       case UserAction.UPDATE_COMPONENT:
         try {
@@ -251,7 +246,7 @@ export default class FilmsBoardPresenter {
         }
         break;
     }
-    //this.#uiBlocker.unblock();
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
