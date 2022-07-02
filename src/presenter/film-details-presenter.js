@@ -7,10 +7,8 @@ import CommentsModel from '../model/comments-model.js';
 import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 import LoadingView from '../view/loading-view.js';
-import FilmsApiService from '../films-api-service.js';
-
-const AUTHORIZATION = 'Basic nepeivinaGertruda';
-const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
+import FilmsApiService from '../api/films-api-service.js';
+import { AUTHORIZATION, END_POINT } from '../config';
 
 const body = document.querySelector('body');
 

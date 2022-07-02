@@ -16,12 +16,9 @@ import FooterView from '../view/footer-view.js';
 import MostRatedView from '../view/most-rated-view.js';
 import MostCommentedView from '../view/most-commented-view.js';
 import FilmSectionView from '../view/films-section-view.js';
+import { TimeLimit } from '../const.js';
 
 const FILMCARD_PER_STEP = 5;
-const TimeLimit = {
-  LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000,
-};
 
 export default class FilmsBoardPresenter {
   #filmMainContainer = null;
@@ -131,7 +128,7 @@ export default class FilmsBoardPresenter {
 
   #renderNoFilms = () => {
     this.#noFilmsComponent = new NoFilmView(this.#filterType);
-    render(this.#noFilmsComponent, this.#filmMainContainer);
+    render(this.#noFilmsComponent, this.#filmsSection.element, RenderPosition.AFTERBEGIN);
   };
 
   #renderShowMoreBtn = () => {
