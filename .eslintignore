@@ -1,2 +1,2 @@
 webpack.config.js
-src/films-api-service.js
+src/api/films-api-service.js
