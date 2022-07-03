@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 const humanizeReliaseDate = (releaseDate) => dayjs(releaseDate).format('YYYY');
 const humanizeFullReliaseDate = (releaseDate) => dayjs(releaseDate).format('DD MMMM YYYY');
@@ -9,8 +10,6 @@ const humanizeFilmDuration = (duration) => {
   return `${hours}h ${minutes}m`;
 };
 
-//const humanizeCommentDate = (commentDate) => dayjs(commentDate).format('YYYY/MM/DD HH:mm');
-const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const humanizeCommentDate = (commentDate) => dayjs().to(dayjs(commentDate));
@@ -31,11 +30,13 @@ const getWeightForNullDate = (dateA, dateB) => {
   return null;
 };
 
-function compareRating(dateA, dateB) {
+function compareDate(dateA, dateB) {
   return dateB - dateA;
 }
 
-const sortByRating = (filmA, filmB) => compareRating(filmA.filmInfo.totalRating, filmB.filmInfo.totalRating);
+const sortByCommentsLength = (filmA, filmB) => compareDate(filmA.comments.length, filmB.comments.length);
+
+const sortByRating = (filmA, filmB) => compareDate(filmA.filmInfo.totalRating, filmB.filmInfo.totalRating);
 
 const sortByDate = (filmA, filmB) => {
   const weight = getWeightForNullDate(filmA.filmInfo.release.date, filmB.filmInfo.release.date);
@@ -50,4 +51,5 @@ export {
   humanizeCommentDate,
   sortByRating,
   sortByDate,
+  sortByCommentsLength,
 };

@@ -1,62 +1,45 @@
-import { render, replace, remove } from '../framework/render.js';
-import FilmCardView from '../view/filmCardView';
+import { render, replace, remove, RenderPosition } from '../framework/render.js';
 import { UserAction, UpdateType } from '../const.js';
-//import FilmDetailsPresenter from './filmDetailsPresenter.js';
-/* import CommentsModel from '../model/commentsModel';
 
-import FilmsApiService from '../films-api-service.js';
-
-const AUTHORIZATION = 'Basic nepeivinaGertruda';
-const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict'; */
-
-//const footer = document.querySelector('footer');
+import FilmCardView from '../view/film-card-view';
+import ControlBtnsView from '../view/control-btns-view.js';
 
 export default class FilmCardPresenter {
   #filmCardContainer = null;
   #filmCard = null;
+  #controlBtns = null;
   #film = null;
   #userDetails = null;
   #changeData = null;
   #filmDetailsPresenter = null;
-  // #filmsModel = null;
-  // #commentsModel = null;
 
   constructor(filmCardContainer, changeData, filmDetailsPresenter) {
     this.#filmCardContainer = filmCardContainer;
-    //this.#filmsModel = filmsModel;
     this.#changeData = changeData;
     this.#filmDetailsPresenter = filmDetailsPresenter;
-    //new FilmDetailsPresenter(footer, this.#handleViewAction);
-    //this.#commentsModel = new CommentsModel(new FilmsApiService(END_POINT, AUTHORIZATION));
-    //this.#commentsModel.addObserver(this.#handleModelEvent);
-
-    //this.#filmDetailsPresenter = filmDetailsPresenter;
   }
-
-  /*   get comments() {
-    console.log(this.#commentsModel);
-    return this.#commentsModel.comments;
-  } */
 
   show = (film) => {
     this.#film = film;
     this.#userDetails = film.userDetails;
     const prevFilmCard = this.#filmCard;
-
     this.#filmCard = new FilmCardView(film);
+    this.#controlBtns = new ControlBtnsView(film);
 
     this.#filmCard.setFilmDetailsHandler(this.#openFilmDetails);
-    this.#filmCard.setFavoriteClickHandler(this.#handleFavoriteClick);
-    this.#filmCard.setAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
-    this.#filmCard.setAddToWatchListClickHandler(this.#handleAddToWatchListClick);
+    this.#controlBtns.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#controlBtns.setAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
+    this.#controlBtns.setAddToWatchListClickHandler(this.#handleAddToWatchListClick);
 
     if (prevFilmCard === null) {
       render(this.#filmCard, this.#filmCardContainer);
+      render(this.#controlBtns, this.#filmCard.element, RenderPosition.BEFOREEND);
       return;
     }
 
     if (this.#filmCard !== prevFilmCard.element) {
       replace(this.#filmCard, prevFilmCard);
+      render(this.#controlBtns, this.#filmCard.element, RenderPosition.BEFOREEND);
     }
   };
 
@@ -94,6 +77,6 @@ export default class FilmCardPresenter {
   };
 
   setAborting = () => {
-    this.#filmCard.shake();
+    this.#controlBtns.shake();
   };
 }

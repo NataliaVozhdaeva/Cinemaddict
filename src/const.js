@@ -26,4 +26,9 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
-export { EMOGI, FilterType, SortType, UserAction, UpdateType };
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+export { EMOGI, FilterType, SortType, UserAction, UpdateType, TimeLimit };

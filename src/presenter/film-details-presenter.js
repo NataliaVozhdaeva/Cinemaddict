@@ -1,18 +1,14 @@
-import FilmDetailsView from '../view/filmDetailsView';
-import CommentsListView from '../view/commentsListView';
-import FilmDetailsSectionView from '../view/filmDetailsSectionView';
-import FilmDetailsFormView from '../view/filmDetailsFormView';
-import NewCommentView from '../view/newCommentFormView';
-import CommentsModel from '../model/commentsModel.js';
+import FilmDetailsView from '../view/film-details-view';
+import CommentsListView from '../view/comments-list-view';
+import FilmDetailsSectionView from '../view/film-details-section-view';
+import FilmDetailsFormView from '../view/film-details-form-view';
+import NewCommentView from '../view/new-comment-form-view';
+import CommentsModel from '../model/comments-model.js';
 import { UserAction, UpdateType } from '../const.js';
 import { render, RenderPosition, remove, replace } from '../framework/render.js';
 import LoadingView from '../view/loading-view.js';
-//import { nanoid } from 'nanoid';
-
-import FilmsApiService from '../films-api-service.js';
-
-const AUTHORIZATION = 'Basic nepeivinaGertruda';
-const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
+import FilmsApiService from '../api/films-api-service.js';
+import { AUTHORIZATION, END_POINT } from '../config';
 
 const body = document.querySelector('body');
 
@@ -42,13 +38,12 @@ export default class FilmDetailsPresenter {
   }
 
   get comments() {
-    // console.log(this.#commentsModel);
     return this.#commentsModel.comments;
   }
 
   show = async (film) => {
     this.film = film;
-    const comments = await this.#commentsModel.init(this.film.id).then(() => this.#commentsModel.comments);
+    await this.#commentsModel.init(this.film.id).then(() => this.#commentsModel.comments);
     this.#userDetails = this.film.userDetails;
     this.prevFilmDetailsComponent = this.#filmDetailsComponent;
     this.prevFilmDetailsSection = this.#filmDetailsSection;
@@ -84,10 +79,6 @@ export default class FilmDetailsPresenter {
       replace(this.#commentsList, this.prevCommentsList);
       this.#renderNewCommentSection();
     }
-
-    if (this.#newComment) {
-      this.#newComment.removeElement();
-    }
   };
 
   #renderPopup = () => {
@@ -122,7 +113,6 @@ export default class FilmDetailsPresenter {
     body.classList.remove('hide-overflow');
     remove(this.#filmDetailsSection);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    //this.prevFilmDetailsComponent = null;
     this.#filmDetailsComponent = null;
     this.film = null;
   };
@@ -161,14 +151,6 @@ export default class FilmDetailsPresenter {
 
   #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
-      /*   case UserAction.UPDATE_COMPONENT:
-        try {
-          await this.#filmsModel.updateFilm(updateType, update);
-        } catch (err) {
-          this.#filmDetailsComponent.setAborting();
-        }
-
-        break; */
       case UserAction.ADD_COMPONENT:
         this.setSaving();
         try {
@@ -178,11 +160,11 @@ export default class FilmDetailsPresenter {
         }
         break;
       case UserAction.DELETE_COMPONENT:
-        this.setDeleting();
+        this.setDeleting(update);
         try {
           await this.#commentsModel.deleteComment(updateType, update);
         } catch (err) {
-          this.setDeleteCommentAborting();
+          this.setDeleteCommentAborting(update);
         }
 
         break;
@@ -191,22 +173,13 @@ export default class FilmDetailsPresenter {
 
   #handleModelEvent = (updateType) => {
     switch (updateType) {
-      /* case UpdateType.PATCH:
-        this.show(this.film);
-         this.#renderComments(); 
-        break; */
       case UpdateType.MINOR:
-        /* this.#renderComments(); */
         this.show(this.film);
-        /* console.log(update);
-        filmsComments.push(update.id);
-        this.show(this.film); */
-        //document.removeEventListener('keydown', this.#handleAddNewComment);
+        this.#changeData(UserAction.UPDATE_COMPONENT, UpdateType.PATCH, this.film);
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
-        /* this.#renderPopup(); */
         break;
     }
   };
@@ -220,7 +193,6 @@ export default class FilmDetailsPresenter {
   };
 
   #handleAddNewComment = (comment) => {
-    // console.log('handleAddNewComment');
     this.#handleViewAction(UserAction.ADD_COMPONENT, UpdateType.MINOR, comment);
   };
 
@@ -238,10 +210,13 @@ export default class FilmDetailsPresenter {
     });
   };
 
-  setDeleting = () => {
-    this.#commentsList.updateElement({
-      isDeleting: true,
-    });
+  setDeleting = (currentComment) => {
+    this.#commentsList.updateElement(currentComment);
+    this.#renderNewCommentSection();
+  };
+
+  setAborting = () => {
+    this.#filmDetailsSection.shake();
   };
 
   setFilmDetailsFormAborting = () => {
@@ -256,6 +231,10 @@ export default class FilmDetailsPresenter {
   };
 
   setDeleteCommentAborting = () => {
-    this.#commentsList.shake();
+    const resetState = () => {
+      this.#commentsList.updateElement();
+    };
+    this.#commentsList.shake(resetState);
+    this.#renderNewCommentSection();
   };
 }

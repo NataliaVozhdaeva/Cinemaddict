@@ -5,10 +5,8 @@ const BLANK_COMMENT = {
   id: null,
   author: null,
   comment: '',
-  date: '2022-05-11T16:12:32.554Z',
-  emotion: null,
-  isDisabled: true,
-  isSaving: true,
+  date: null,
+  emotion: 'smile',
 };
 
 function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
@@ -49,6 +47,17 @@ function createNewCommentFormTemplate({ isDisabled, isSaving, ...newComment }) {
       </div>
     </div>`;
 }
+const pressKeyHandler = (cb) => {
+  const listener = (evt) => {
+    if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
+      cb();
+    }
+  };
+
+  document.addEventListener('keydown', listener);
+
+  return () => document.removeEventListener('keydown', listener);
+};
 
 export default class NewCommentView extends AbstractStatefulView {
   emotions = [];
@@ -67,24 +76,10 @@ export default class NewCommentView extends AbstractStatefulView {
 
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextHandler);
 
-    const pressKeyHandler = () => {
-      const listener = (evt) => {
-        if (evt.key === 'Enter' && (evt.metaKey || evt.ctrlKey)) {
-          this.#saveData();
-          document.removeEventListener('keydown', listener);
-        }
-      };
-
-      document.addEventListener('keydown', listener);
-
-      return () => document.removeEventListener('keydown', listener);
-    };
-
-    /* if (this.#removeListener) {
+    if (this.#removeListener) {
       this.#removeListener();
-    } */
-
-    /* this.#removeListener = */ pressKeyHandler(this.newComment);
+    }
+    this.#removeListener = pressKeyHandler(this.#saveData);
   };
 
   setAddNewCommentHandler = (callback) => {
@@ -92,7 +87,13 @@ export default class NewCommentView extends AbstractStatefulView {
   };
 
   #saveData = () => {
-    this._callback.addNewComment(NewCommentView.parseStateToComment(this._state));
+    if (!this._state.comment || !this._state.emotion) {
+      return;
+    }
+
+    const comment = NewCommentView.parseStateToComment(this._state);
+    this.reset(BLANK_COMMENT);
+    this._callback.addNewComment(comment);
   };
 
   #emogiToggleHandler = (evt) => {
@@ -100,7 +101,6 @@ export default class NewCommentView extends AbstractStatefulView {
     this.updateElement({
       emotion: evt.target.value,
     });
-    //this.removeListeners();
   };
 
   #newCommentTextHandler = (evt) => {
@@ -112,12 +112,7 @@ export default class NewCommentView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
-    // this.removeListeners();
   };
-
-  /*  reset = (newComment) => {
-    this.updateElement(NewCommentView.parsCommentToState(newComment));
-  }; */
 
   removeListeners = () => {
     this.element
@@ -135,19 +130,16 @@ export default class NewCommentView extends AbstractStatefulView {
   });
 
   static parseStateToComment = (state) => {
-    const newComment = { ...state };
-    delete newComment.isDisabled;
-    delete newComment.isSaving;
-    this._setState = {};
-    return newComment;
+    delete state.isDisabled;
+    delete state.isSaving;
+    return { ...state };
+  };
+
+  reset = (comment) => {
+    this.updateElement(NewCommentView.parseCommentToState(comment));
   };
 
   get template() {
     return createNewCommentFormTemplate(this._state);
-  }
-
-  remove() {
-    this.#removeListener();
-    this.#removeListener = null;
   }
 }
